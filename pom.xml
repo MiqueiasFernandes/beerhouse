@@ -16,7 +16,6 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.4.RELEASE</version>
 	</parent>
-    
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,10 +24,12 @@
 	</properties>
 
 	<dependencies>
-		<!-- <dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency> -->
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -39,6 +40,23 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- H2 database with pool-->
+
+		<!-- https://www.baeldung.com/spring-boot-h2-database-->
+		<!-- http://localhost:9000/beerhouse/h2-console -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- https://www.baeldung.com/hikaricp-->
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+		</dependency>
+
 	</dependencies>
     
     <repositories>
@@ -56,7 +74,9 @@
                 <configuration>
                     <finalName>craft-beer</finalName>
                 </configuration>
+				<version>2.3.5.RELEASE</version>
             </plugin>
         </plugins>
     </build>
+
 </project>
