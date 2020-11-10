@@ -69,7 +69,7 @@ public class BeerService {
      */
     public void delete(Integer id) {
         log.debug("Request to delete Beer : {}", id);
-        beerRepository.delete(id);
+        beerRepository.deleteById(id);
     }
 
 }

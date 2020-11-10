@@ -1,7 +1,7 @@
 package com.beerhouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
+//import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -31,7 +31,7 @@ public class Beer {
      * Get id
      * @return id
      **/
-    @ApiModelProperty(value = "")
+//    @ApiModelProperty(value = "")
 
 
     public Integer getId() {
@@ -51,7 +51,6 @@ public class Beer {
      * Get name
      * @return name
      **/
-    @ApiModelProperty(value = "")
 
 
     public String getName() {
@@ -71,7 +70,6 @@ public class Beer {
      * Get ingredients
      * @return ingredients
      **/
-    @ApiModelProperty(value = "")
 
 
     public String getIngredients() {
@@ -91,7 +89,6 @@ public class Beer {
      * Get alcoholContent
      * @return alcoholContent
      **/
-    @ApiModelProperty(value = "")
 
 
     public String getAlcoholContent() {
@@ -111,7 +108,6 @@ public class Beer {
      * Get price
      * @return price
      **/
-    @ApiModelProperty(value = "")
 
     @Valid
 
@@ -132,7 +128,6 @@ public class Beer {
      * Get category
      * @return category
      **/
-    @ApiModelProperty(value = "")
 
 
     public String getCategory() {

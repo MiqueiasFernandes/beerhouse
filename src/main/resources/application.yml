@@ -1,27 +1,66 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
 server:
   port: 9000
 
 spring:
   application:
     name: Craft-Beer
-
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./BeerDB;AUTO_SERVER=TRUE
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
-    hikari:
-      poolName: Hikari
-  h2:
-    console:
-      enabled: true
-
-  jpa:
-    show-sql: true
-    hibernate.ddl-auto: create-drop
-    properties:
+  profiles:
+    # Alterar o perfil ativo na execução da aplicação
+    # Ele pode ser alterado na linha de comando com os argumentos:
+    # `--spring.profiles.active`
+    # `-Dspring.profiles.active`
+    active: #spring.profiles.active#
+  jmx:
+    enabled: false
+    data:
+      jpa:
+        repositories:
+          bootstrap-mode: deferred
+    jpa:
+      open-in-view: false
+      properties:
+        hibernate.jdbc.time_zone: UTC
+        hibernate.id.new_generator_mappings: true
+        hibernate.connection.provider_disables_autocommit: true
+        hibernate.cache.use_second_level_cache: true
+        hibernate.cache.use_query_cache: false
+        hibernate.generate_statistics: false
+        # modify batch size as necessary
+        hibernate.jdbc.batch_size: 25
+        hibernate.order_inserts: true
+        hibernate.order_updates: true
+        hibernate.query.fail_on_pagination_over_collection_fetch: true
+        hibernate.query.in_clause_parameter_padding: true
       hibernate:
-        id.new_generator_mappings: true
-        dialect: org.hibernate.dialect.H2Dialect
-        cache.use_second_level_cache: true
+        ddl-auto: none
+        naming:
+          physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+          implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
+    main:
+      allow-bean-definition-overriding: true
+
+    output:
+      ansi:
+        console-available: true
+
+jhipster:
+  swagger:
+    default-include-pattern: /api/.*
+    title: Beer House API
+    description: Beer House API documentation
+    version: 1.0
+    terms-of-service-url:
+    contact-name:
+    contact-url:
+    contact-email:
+    license: unlicensed
+    license-url:
