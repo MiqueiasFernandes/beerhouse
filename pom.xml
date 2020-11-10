@@ -41,6 +41,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
 		<!-- H2 database with pool-->
 		<!-- https://www.baeldung.com/spring-boot-h2-database-->
 		<!-- http://localhost:9000/beerhouse/h2-console -->

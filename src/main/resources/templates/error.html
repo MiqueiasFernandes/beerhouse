@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Requisição não processada</title>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${error}"></h1>
+    <b>Status: </b><span th:text="${status}"></span><br/>
+    <b>Considere voltar ao <a th:href="@{/}">inicio</a>.</b><br/>
+    <pre th:text="${message}"></pre>
+</div>
+</body>
+</html>

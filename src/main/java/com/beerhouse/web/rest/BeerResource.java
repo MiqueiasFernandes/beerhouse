@@ -22,10 +22,10 @@ public class BeerResource {
         this.beerRepository = beerRepository;
     }
 
-    @GetMapping
+    @GetMapping("/beer")
     public ResponseEntity<List<Beer>> getAllBeer() {
         this.beerService.saveBeer();
-        List<Beer> beers = this.beerRepository.findAll();
+        List<Beer> beers = this.beerRepository.findAll() ;
         return ResponseEntity.ok(beers);
     }
 }
