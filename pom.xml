@@ -48,8 +48,6 @@
 
 		<!-- H2 database with pool-->
 		<!-- https://www.baeldung.com/spring-boot-h2-database-->
-		<!-- http://localhost:9000/beerhouse/h2-console -->
-		<!-- jdbc:h2:C:/Users/conta/IdeaProjects/craftbeer/BeerDB;MV_STORE=false;AUTO_SERVER=TRUE -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -60,6 +58,26 @@
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 		</dependency>
+
+		<!-- Swagger UI-->
+		<!-- https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api-->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+		<!-- Jhipster for utils -->
+<!--		<dependency>-->
+<!--			<groupId>io.github.jhipster</groupId>-->
+<!--			<artifactId>jhipster-framework</artifactId>-->
+<!--			<version>3.0.0</version>-->
+<!--		</dependency>-->
 
 	</dependencies>
     
@@ -78,7 +96,6 @@
                 <configuration>
                     <finalName>craft-beer</finalName>
                 </configuration>
-				<version>2.3.5.RELEASE</version>
             </plugin>
         </plugins>
     </build>
