@@ -8,7 +8,7 @@ spring:
 
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./h2.db
+    url: jdbc:h2:file:./BeerDB;AUTO_SERVER=TRUE
     driverClassName: org.h2.Driver
     username: sa
     password: password
@@ -19,4 +19,10 @@ spring:
       enabled: true
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate.ddl-auto: create-drop
+    properties:
+      hibernate:
+        id.new_generator_mappings: true
+        dialect: org.hibernate.dialect.H2Dialect
+        cache.use_second_level_cache: true

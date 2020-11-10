@@ -1,11 +1,16 @@
 package com.beerhouse.entity;
 
-public class Beer {
-    private String name;
+import javax.persistence.*;
 
-    public Beer(String name) {
-        this.name = name;
-    }
+@Entity
+@Table
+public class Beer {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
 
     public String getName() {
         return name;

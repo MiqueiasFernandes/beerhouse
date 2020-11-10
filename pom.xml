@@ -42,13 +42,12 @@
 		</dependency>
 
 		<!-- H2 database with pool-->
-
 		<!-- https://www.baeldung.com/spring-boot-h2-database-->
 		<!-- http://localhost:9000/beerhouse/h2-console -->
+		<!-- jdbc:h2:C:/Users/conta/IdeaProjects/craftbeer/BeerDB;MV_STORE=false;AUTO_SERVER=TRUE -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 
 		<!-- https://www.baeldung.com/hikaricp-->
