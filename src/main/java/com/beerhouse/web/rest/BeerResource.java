@@ -1,17 +1,20 @@
 package com.beerhouse.web.rest;
 
 import com.beerhouse.entity.Beer;
-import com.beerhouse.repository.BeerRepository;
+import com.beerhouse.service.BeerQueryService;
 import com.beerhouse.service.BeerService;
-import io.github.jhipster.service.filter.IntegerFilter;
+import com.beerhouse.service.dto.BeerCriteria;
+import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-//import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,34 +25,33 @@ public class BeerResource {
 
     private final Logger log = LoggerFactory.getLogger(BeerResource.class);
 
-    private final BeerService beerService;       // to operations
-    private final BeerRepository beerRepository; // to queryes
+    private final BeerService beerService;
+    private final BeerQueryService beerQueryService;
 
-    public BeerResource(BeerService beerService, BeerRepository beerRepository) {
+    public BeerResource(BeerService beerService, BeerQueryService beerQueryService) {
         this.beerService = beerService;
-        this.beerRepository = beerRepository;
+        this.beerQueryService = beerQueryService;
     }
 
     /**
      * {@code GET /beers} : get all beers.
      *
      * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all beers.
      */
     @GetMapping("/beers")
-//    @ApiOperation(nickname = "getAllBeers", response = Beer.class, responseContainer = "List", value = "List all beers.")
-    public ResponseEntity<List<Beer>> getAllBeers(Pageable pageable) {
+    @ApiOperation(nickname = "getAllBeers", response = Beer.class, responseContainer = "List", value = "List all beers.")
+    public ResponseEntity<List<Beer>> getAllBeers(BeerCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Beers page: {}", pageable);
         faik();
-
-        final Page<Beer> page = beerService.findAll(pageable);
-//        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
-//                ServletUriComponentsBuilder.fromCurrentRequest(),
-//                page
-//        );
+        final Page<Beer> page = beerQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
+                ServletUriComponentsBuilder.fromCurrentRequest(),
+                page
+        );
         return ResponseEntity
                 .ok()
-//                .headers(headers)
+                .headers(headers)
                 .body(page.getContent());
     }
 
@@ -59,38 +61,25 @@ public class BeerResource {
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
-    @GetMapping("/beer/count")
-    public ResponseEntity<Long> countBeers(Beer criteria) {
+    @GetMapping("/beers/count")
+    public ResponseEntity<Long> countBeers(BeerCriteria criteria) {
         log.debug("REST request to count Beer by criteria: {}", criteria);
-        return null;///ResponseEntity.ok().body(beer.countByCriteria(criteria));
+        return ResponseEntity.ok().body(beerQueryService.countByCriteria(criteria));
     }
 
     /**
      * {@code GET  /beers/:id} : get the "id" Beer.
      *
      * @param id the id of the dBConf to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the dBConf, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the Beer, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/beer/{id}")
-//    @ApiOperation(value = "Get Beer By Id", nickname = "getBeerById", response = Beer.class)
+    @GetMapping("/beers/{id}")
+    @ApiOperation(value = "Get Beer By Id", nickname = "getBeerById", response = Beer.class)
     public ResponseEntity<Beer> getBeer(@PathVariable Integer id) {
-        log.debug("REST request to get DBConf : {}", id);
+        log.debug("REST request to get Beer : {}", id);
         Optional<Beer> dBConf = beerService.findOne(id);
         return ResponseUtil.wrapOrNotFound(dBConf);
     }
-
-
-
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Status 200", response = Beer.class) })
-//    @RequestMapping(value = "/beers/{id}",
-//            produces = { "application/json" },
-//            consumes = { "application/json" },
-//            method = RequestMethod.GET)
-//    ResponseEntity<Beer> getBeerById(@ApiParam(value = "",required=true) @PathVariable("id") String id);
-
-
-
 
 
 

@@ -54,8 +54,8 @@ spring:
 
 jhipster:
   swagger:
-    default-include-pattern: /api/.*
-    title: Beer House API
+    default-include-pattern: /beers.*
+    title: CraftBeer API
     description: Beer House API documentation
     version: 1.0
     terms-of-service-url:
