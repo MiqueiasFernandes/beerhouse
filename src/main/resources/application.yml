@@ -13,44 +13,59 @@ spring:
   application:
     name: Craft-Beer
   profiles:
-    # Alterar o perfil ativo na execução da aplicação
-    # Ele pode ser alterado na linha de comando com os argumentos:
-    # `--spring.profiles.active`
-    # `-Dspring.profiles.active`
-    active: #spring.profiles.active#
+    # The commented value for `active` can be replaced with valid Spring profiles to load.
+    # Otherwise, it will be filled in by maven when building the JAR file
+    # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+    active: @spring.profiles.active@
+    include:
+      - swagger
   jmx:
     enabled: false
-    data:
-      jpa:
-        repositories:
-          bootstrap-mode: deferred
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+  data:
     jpa:
-      open-in-view: false
-      properties:
-        hibernate.jdbc.time_zone: UTC
-        hibernate.id.new_generator_mappings: true
-        hibernate.connection.provider_disables_autocommit: true
-        hibernate.cache.use_second_level_cache: true
-        hibernate.cache.use_query_cache: false
-        hibernate.generate_statistics: false
-        # modify batch size as necessary
-        hibernate.jdbc.batch_size: 25
-        hibernate.order_inserts: true
-        hibernate.order_updates: true
-        hibernate.query.fail_on_pagination_over_collection_fetch: true
-        hibernate.query.in_clause_parameter_padding: true
-      hibernate:
-        ddl-auto: none
-        naming:
-          physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-          implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-
-    main:
-      allow-bean-definition-overriding: true
-
-    output:
-      ansi:
-        console-available: true
+      repositories:
+        bootstrap-mode: deferred
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:h2:file:./target/h2db/db/BeerDB;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
+    open-in-view: false
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: true
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      # modify batch size as necessary
+      hibernate.jdbc.batch_size: 25
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
+      hibernate.query.in_clause_parameter_padding: true
+    hibernate:
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+  main:
+    allow-bean-definition-overriding: true
+  output:
+    ansi:
+      console-available: true
 
 jhipster:
   swagger:

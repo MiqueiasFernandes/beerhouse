@@ -1,25 +1,37 @@
-<html>
-<head>
-    <title>Bem vindo a BeerHouse API!</title>
-    <style>
-        body {
-            margin: 3% 5%;
-        }
-    </style>
-</head>
-<body>
-<h1>Beer House &#127866; API</h1>
-<ul>
-    <li>Acesso ao banco de dados H2*: <a href="h2-console" target="_blank">/h2-console</a></li>
-    <li>Acesso ao swager: <a href="swagger-ui.html" target="_blank">/swagger-ui.html</a></li>
-    <li>Acesso a API: <a href="/beers" target="_blank">/beers</a></li>
-</ul>
-<pre>
-Acesso ao H2:
-  H2: jdbc:h2:C:/Users/conta/IdeaProjects/craftbeer/BeerDB;MV_STORE=false;AUTO_SERVER=TRUE
-  User Name: sa
-  Password: password
-</pre>
+<!doctype html>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <title>Bem vindo a BeerHouse API!</title>
+        <style>
+            body {
+                margin: 3% 5%;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Beer House &#127866; <i>API</i></h1>
+        <ul>
+            <li>Acesso ao banco de dados H2*: <a href="h2-console" target="_blank">/h2-console</a></li>
+            <li>Acesso ao swager: <a href="swagger-ui.html" target="_blank">/swagger-ui.html</a></li>
+            <li>Acesso a API: <a href="/beers" target="_blank">/beers</a></li>
+        </ul>
+        <hr>
+        <b>Frameworks:</b> Spring, JHipster<br>
+        <b>Recursos:</b> Spring-boot, H2, Hikari, Swagger, SLF4j-logback<br>
+        <b>Features:</b> API RestFull, Serviços, Paginação, Filtro<br>
+        <pre>
+            • Ober o mvn wrapper (mvnw):
+                mvn -N io.takari:maven:wrapper
 
-</body>
+            • Executar em ambiente de desenvolvimento:
+                ./mvnw
+
+            • Gerar jar para executar em ambiente de produção:
+                ./mvnw -Pprod clean verify
+
+            • Executar Jar package:
+                java -jar target/craft-beer-1.0.jar
+        </pre>
+    </body>
 </html>

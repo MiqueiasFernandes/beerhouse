@@ -13,39 +13,9 @@ logging:
     com.beerhouse: DEBUG
 
 spring:
-  profiles:
-    active: dev
-    include:
-      - swagger
-  devtools:
-    restart:
-      enabled: true
-      additional-exclude: static/**,.h2.server.properties
-    livereload:
-      enabled: false
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./BeerDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
-    hikari:
-      poolName: Hikari
-      auto-commit: false
-  h2:
-    console:
-      enabled: true
-
   jpa:
-    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
     show-sql: true
-    hibernate.ddl-auto: create-drop
-    properties:
-      hibernate:
-        id.new_generator_mappings: true
-        dialect: org.hibernate.dialect.H2Dialect
-        cache.use_second_level_cache: true
-
+    hibernate.ddl-auto: create
 
 # ===================================================================
 # JHipster specific properties

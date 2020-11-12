@@ -1,5 +1,6 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/*
 
 ### STS ###
 .apt_generated
@@ -25,3 +26,6 @@ nbdist/
 
 ### H2 ###
 BeerDB.*
+
+### maven wraper ###
+mvnw.*
