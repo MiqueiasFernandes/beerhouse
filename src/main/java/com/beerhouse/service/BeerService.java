@@ -1,6 +1,6 @@
 package com.beerhouse.service;
 
-import com.beerhouse.entity.Beer;
+import com.beerhouse.domain.Beer;
 import com.beerhouse.repository.BeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
