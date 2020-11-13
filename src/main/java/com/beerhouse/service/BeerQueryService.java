@@ -2,7 +2,7 @@ package com.beerhouse.service;
 
 import java.util.List;
 
-import com.beerhouse.entity.Beer_;
+import com.beerhouse.domain.Beer_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.github.jhipster.service.QueryService;
 
-import com.beerhouse.entity.Beer;
+import com.beerhouse.domain.Beer;
 import com.beerhouse.repository.BeerRepository;
 import com.beerhouse.service.dto.BeerCriteria;
 

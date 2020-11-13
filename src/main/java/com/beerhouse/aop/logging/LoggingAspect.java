@@ -43,7 +43,7 @@ public class LoggingAspect {
      */
     @Pointcut("within(com.beerhouse.repository..*)" +
             " || within(com.beerhouse.service..*)" +
-            " || within(com.beerhouse.web.rest..*)")
+            " || within(com.beerhouse.api.web.rest..*)")
     public void applicationPackagePointcut() {
         // Method is empty as this is just a Pointcut, the implementations are in the advices.
     }

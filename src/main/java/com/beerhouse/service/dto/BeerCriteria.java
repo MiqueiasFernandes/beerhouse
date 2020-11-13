@@ -10,8 +10,8 @@ import io.github.jhipster.service.filter.IntegerFilter;
 import io.github.jhipster.service.filter.StringFilter;
 
 /**
- * Criteria class for the {@link com.beerhouse.entity.Beer} entity. This class is used
- * in {@link com.beerhouse.web.rest.BeerResource} to receive all the possible filtering options from
+ * Criteria class for the {@link com.beerhouse.domain.Beer} entity. This class is used
+ * in {@link com.beerhouse.api.web.rest.BeerSpringAPI} to receive all the possible filtering options from
  * the Http GET request parameters.
  * For example the following could be a valid request:
  * {@code /beers?id.greaterThan=5&attr1.contains=something&attr2.specified=false}
