@@ -1,9 +1,9 @@
 package com.beerhouse.domain;
 
-//import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -13,26 +13,25 @@ public class Beer {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Integer id = null;
+    private Integer id;
 
-    private String name = null;
-    private String ingredients = null;
-    private String alcoholContent = null;
-    private BigDecimal price = null;
-    private String category = null;
+    @Column(length = 100, unique = true, nullable = false)
+    private String name;
 
-    public Beer id(Integer id) {
-        this.id = id;
-        return this;
-    }
+    @Column(length = 50)
+    private String alcoholContent;
 
-    /**
-     * Get id
-     * @return id
-     **/
-//    @ApiModelProperty(value = "")
+    @Column(length = 50)
+    private String category ;
 
+    @JsonIgnore
+    @Column(length = 1000)
+    private String ingredients;
 
+    @Column(nullable = false)
+    private BigDecimal price;
+
+    @ApiModelProperty(value = "Id")
     public Integer getId() {
         return id;
     }
@@ -41,17 +40,7 @@ public class Beer {
         this.id = id;
     }
 
-    public Beer name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * Get name
-     * @return name
-     **/
-
-
+    @ApiModelProperty(value = "Nome")
     public String getName() {
         return name;
     }
@@ -60,17 +49,7 @@ public class Beer {
         this.name = name;
     }
 
-    public Beer ingredients(String ingredients) {
-        this.ingredients = ingredients;
-        return this;
-    }
-
-    /**
-     * Get ingredients
-     * @return ingredients
-     **/
-
-
+    @ApiModelProperty(value = "Ingredientes")
     public String getIngredients() {
         return ingredients;
     }
@@ -79,17 +58,7 @@ public class Beer {
         this.ingredients = ingredients;
     }
 
-    public Beer alcoholContent(String alcoholContent) {
-        this.alcoholContent = alcoholContent;
-        return this;
-    }
-
-    /**
-     * Get alcoholContent
-     * @return alcoholContent
-     **/
-
-
+    @ApiModelProperty(value = "Teor de alcool")
     public String getAlcoholContent() {
         return alcoholContent;
     }
@@ -98,18 +67,7 @@ public class Beer {
         this.alcoholContent = alcoholContent;
     }
 
-    public Beer price(BigDecimal price) {
-        this.price = price;
-        return this;
-    }
-
-    /**
-     * Get price
-     * @return price
-     **/
-
-    @Valid
-
+    @ApiModelProperty(value = "Preço")
     public BigDecimal getPrice() {
         return price;
     }
@@ -118,17 +76,7 @@ public class Beer {
         this.price = price;
     }
 
-    public Beer category(String category) {
-        this.category = category;
-        return this;
-    }
-
-    /**
-     * Get category
-     * @return category
-     **/
-
-
+    @ApiModelProperty(value = "Categoria")
     public String getCategory() {
         return category;
     }
@@ -136,7 +84,6 @@ public class Beer {
     public void setCategory(String category) {
         this.category = category;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -162,27 +109,13 @@ public class Beer {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class Beer {\n");
-
-        sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    name: ").append(toIndentedString(name)).append("\n");
-        sb.append("    ingredients: ").append(toIndentedString(ingredients)).append("\n");
-        sb.append("    alcoholContent: ").append(toIndentedString(alcoholContent)).append("\n");
-        sb.append("    price: ").append(toIndentedString(price)).append("\n");
-        sb.append("    category: ").append(toIndentedString(category)).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
+        return "Beer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", alcoholContent='" + alcoholContent + '\'' +
+                ", category='" + category + '\'' +
+                ", ingredients='" + ingredients + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

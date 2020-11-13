@@ -1,6 +1,9 @@
 package com.beerhouse.api.web.rest;
 
 import com.beerhouse.api.BeerAPI;
+import com.beerhouse.api.errors.BadRequestAlertException;
+import com.beerhouse.domain.Beer;
+import com.beerhouse.entity.IEntity;
 import com.beerhouse.entity.spring.SpringEntity;
 import com.beerhouse.entity.spring.SpringPage;
 import com.beerhouse.entity.spring.SpringSort;
@@ -9,6 +12,8 @@ import com.beerhouse.service.BeerService;
 import com.beerhouse.service.dto.BeerCriteria;
 import com.beerhouse.service.dto.BeerDTO;
 import io.github.jhipster.web.util.PaginationUtil;
+import io.github.jhipster.web.util.ResponseUtil;
+import io.undertow.util.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,11 +21,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
+
+import static org.hibernate.id.IdentifierGenerator.ENTITY_NAME;
 
 /**
  * Controler Spring para implementar a API em Rest de acesso ao cadastro de {@link com.beerhouse.domain.Beer}.
@@ -39,25 +49,168 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
         this.beerQueryService = beerQueryService;
     }
 
+    /**
+     * {@code GET  /beers} : Listar todas cervejas.
+     *
+     * @param page argumento opcional para paginar o resultado.
+     * @param sort argumento opcional para ordenar o resultado.
+     * @param criteria argumento opcional para filtrar o resultado por criterios.
+     *
+     * @return the {@link SpringEntity} with status {@code 200 (OK)} and the list of {@link BeerDTO} in body.
+     */
     @Override
     @GetMapping("/beers")
-    public SpringEntity<List<BeerDTO>> getBeers(SpringPage pagina, SpringSort ordem, BeerCriteria filtro) {
+    public SpringEntity<List<BeerDTO>> getBeers(SpringPage page, SpringSort sort, BeerCriteria criteria) {
 
-        Sort sort = ordem.getSpringSort();
-        Pageable pageable = pagina.getPageable(sort);
+        faik();
 
-        log.debug("REST request {} de pagina {} de Beers na ordem {} filtrado por {}",
-                pagina.requestedItems(), pageable, ordem.printableSort(), filtro);
+        Sort springSort = sort.getSpringSort();
+        Pageable pageable = page.getPageable(springSort);
 
-        Page<BeerDTO> page = beerQueryService.findByCriteria(filtro, pageable).map(BeerDTO::new);
+        log.debug("REST request to get {} in page {} of Beers by sort {} and criteria {}",
+                page.requestedItems(), page, sort.printableSort(), criteria);
+
+        Page<BeerDTO> beersPage = beerQueryService.findByCriteria(criteria, pageable).map(BeerDTO::new);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(
                 ServletUriComponentsBuilder.fromCurrentRequest(),
-                page
+                beersPage
         );
-        ResponseEntity<List<BeerDTO>> response = ResponseEntity.ok().headers(headers).body(page.getContent());
-        SpringEntity<List<BeerDTO>> springEntity = SpringEntity.fromResponse(response);
-        log.debug("Consulta de cervejas: {}", springEntity.printableEntity());
-        return springEntity;
+        SpringEntity<List<BeerDTO>>  response = springEntity(ok().headers(headers).body(beersPage.getContent()));
+        log.debug("Consulta de cervejas: {}", response.printableEntity());
+        return response;
     }
+
+    /**
+     * {@code GET  /beers/count} : Contabilizar cervejas por algum criterio opcional.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link SpringEntity} with status {@code 200 (OK)} and the count as {@link Long} in body.
+     */
+    @Override
+    @GetMapping("/beers/count")
+    public SpringEntity<Long> countBeers(BeerCriteria criteria) {
+        log.debug("REST request to count Beer by criteria: {}", criteria);
+        return springEntity(ok(beerQueryService.countByCriteria(criteria)));
+    }
+
+    /**
+     * {@code GET  /beers/:id} : Consultar cerveja pelo seu identificador "id".
+     *
+     * @param id the id of the {@link Beer} to retrieve.
+     * @return the {@link SpringEntity} with status {@code 200 (OK)} and with body the {@link BeerDTO},
+     *         or with status {@code 404 (Not Found)}.
+     */
+    @Override
+    @GetMapping("/beers/{id}")
+    public SpringEntity<BeerDTO> getBeer(Integer id) {
+        log.debug("REST request to get Beer : {}", id);
+        Optional<BeerDTO> beer = beerService.findOne(id).map(BeerDTO::new);
+        return springEntity(ResponseUtil.wrapOrNotFound(beer));
+    }
+
+    /**
+     * {@code POST  /beers} : Cadastrar nova cerveja.
+     *
+     * @param beer a cerveja a ser cadastrada.
+     * @return the {@link SpringEntity} with status {@code 201 (Created)} and with body the new {@link Beer},
+     *         or with status {@code 400 (Bad Request)} if the {@link Beer} has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @Override
+    @PostMapping("/beers")
+    public SpringEntity<BeerDTO> postBeer(@RequestBody BeerDTO beer) throws URISyntaxException {
+        log.debug("REST request to save Beer : {}", beer);
+
+        if (beer.getId() != null) {
+            throw new BadRequestAlertException("O Campo Id deve estar vazio", ENTITY_NAME, "idexists");
+        }
+
+        BeerDTO result = new BeerDTO(beerService.save(beer.toBeer()));
+        return springEntity(ResponseEntity
+                .created(new URI("/beers/" + result.getId()))
+                .body(result));
+    }
+
+    /**
+     * {@code PUT  /beers} : Atualizar uma cerveja existente.
+     *
+     * @param beer a cerveja a ser atualizada.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated {@link BeerDTO},
+     * or with status {@code 400 (Bad Request)} if the {@link Beer} is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the {@link Beer} couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @Override
+    @PutMapping("/beers")
+    public SpringEntity<BeerDTO> putBeer(@RequestBody BeerDTO beer) {
+        log.debug("REST request to update Beer : {}", beer);
+        if (beer.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        BeerDTO result = new BeerDTO(beerService.save(beer.toBeer()));
+        return springEntity(ok(result));
+    }
+
+    /**
+     * {@code PATCH  /beers/:id} : Atualizar preço da cerveja pelo seu identificador "id".
+     *
+     * @param id the id of the {@link Beer} to update price.
+     * @return the {@link SpringEntity} with status {@code 200 (OK)} and with body the {@link BeerDTO}.
+     */
+    @Override
+    @PatchMapping("/beers/:id")
+    public SpringEntity<BeerDTO> patchBeer(@PathVariable Integer id, BigDecimal price) {
+        Beer beer = beerService
+                .findOne(id)
+                .orElseThrow(() -> new BadRequestAlertException("Id invalido", ENTITY_NAME, "invalidId"));
+
+        beer.setPrice(price);
+        beerService.save(beer);
+        return springEntity(ok(new BeerDTO(beer)));
+    }
+
+    /**
+     * {@code DELETE  /beers/:id} : Remover a cerveja pelo seu identificador "id".
+     *
+     * @param id the id of the {@link Beer} to delete.
+     * @return the {@link SpringEntity} with status {@code 204 (NO_CONTENT)}.
+     */
+    @Override
+    @DeleteMapping("/beers/{id}")
+    public SpringEntity<Void> deleteBeer(@PathVariable Integer id) {
+        log.debug("REST request to delete Beer : {}", id);
+        beerService.delete(id);
+        return springEntity(ResponseEntity.noContent().build());
+    }
+
+    private static final <T> SpringEntity<T> springEntity(ResponseEntity<T> responseEntity) {
+        return SpringEntity.fromResponse(responseEntity);
+    }
+
+    private static final ResponseEntity.BodyBuilder ok() {
+        return ResponseEntity.ok();
+    }
+
+    private static final <T> ResponseEntity<T> ok(T body) {
+        return ResponseEntity.ok(body);
+    }
+
+    void faik() {
+        saveBeer(new String[]{"Skol", "100%", "Boa", "Cevada & Alcohol & Água", "3.56"});
+        saveBeer(new String[]{"Antartica", "50%", "Otima", "Cevada & Alcohol", "4.9995"});
+            saveBeer(new String[]{"Bramaha", "35%", "Boa", "Alcohol & Água", "2"});
+            saveBeer(new String[]{"Kayser", "35%", "Boa", null, "2"});
+    }
+
+    void saveBeer(String[] args) {
+        Beer beer = new Beer();
+        beer.setName(args[0]);
+        beer.setAlcoholContent(args[1]);
+        beer.setCategory(args[2]);
+        beer.setIngredients(args[3]);
+        beer.setPrice(BigDecimal.valueOf(Float.valueOf(args[4])));
+        beerService.save(beer);
+    }
+
 
 }

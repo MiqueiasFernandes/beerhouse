@@ -48,8 +48,23 @@ public class BeerDTO {
         ;
     }
 
+    public Beer toBeer() {
+        Beer beer = new Beer();
+        beer.setId(getId());
+        beer.setName(getName());
+        beer.setAlcoholContent(getAlcoholContent());
+        beer.setCategory(getCategory());
+        beer.setIngredients(getIngredients());
+        beer.setPrice(getPrice());
+        return beer;
+    }
+
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFormula() {
@@ -102,8 +117,14 @@ public class BeerDTO {
 
     @Override
     public String toString() {
-        return "UserDTO{" +
+        return "BeerDTO{" +
+                "id=" + id +
                 ", name='" + name + '\'' +
-                "}";
+                ", alcoholContent='" + alcoholContent + '\'' +
+                ", category='" + category + '\'' +
+                ", ingredients='" + ingredients + '\'' +
+                ", price=" + price +
+                ", formula='" + formula + '\'' +
+                '}';
     }
 }

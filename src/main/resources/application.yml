@@ -68,6 +68,8 @@ spring:
       console-available: true
 
 jhipster:
+  clientApp:
+    name: Craft-Beer
   swagger:
     default-include-pattern: /beers.*
     title: CraftBeer API
