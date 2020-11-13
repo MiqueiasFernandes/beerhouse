@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.List;
 
+
 /**
  * Especificação da API de acesso ao cadastro de {@link Beer}.
  * O Swagger foi utilizado aqui para auxiliar na especificação da API.
@@ -19,13 +20,15 @@ import java.util.List;
  * Para implementar essa interface deve-se realizar {@link IEntity}, {@link IPage} e {@link ISort}.
  */
 @Api(value = "beers")
-public interface BeerAPI<P extends IPage, S extends ISort> {
+public interface BeerAPI<
+        E extends IEntity<List<BeerDTO>>, F extends IEntity<Long>, G extends IEntity<BeerDTO>,
+        P extends IPage, S extends ISort> {
 
     /**
      * Listar {@link Beer}.
      *
-     * @param page argumento opcional para paginar o resultado.
-     * @param sort argumento opcional para ordenar o resultado.
+     * @param page     argumento opcional para paginar o resultado.
+     * @param sort     argumento opcional para ordenar o resultado.
      * @param criteria argumento opcional para filtrar o resultado por criterios.
      * @return uma {@link IEntity} com uma {@link List} de Beer.
      */
@@ -39,7 +42,7 @@ public interface BeerAPI<P extends IPage, S extends ISort> {
             message = "Consulta realizada com sucesso.",
             response = Beer.class,
             responseContainer = "List")})
-    IEntity<List<Beer>> getBeers(
+    E getBeers(
             @ApiParam(value = "Parametro para paginar o resultado") P page,
             @ApiParam(value = "Parametro para ordenar o resultado") S sort,
             @ApiParam(value = "Criterio para filtrar o resultado") BeerCriteria criteria
@@ -54,7 +57,7 @@ public interface BeerAPI<P extends IPage, S extends ISort> {
      */
     @ApiOperation(nickname = "countBeers", response = Long.class, value = "Contabilizar cervejas.")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Contabilizado com sucesso.", response = Long.class)})
-    IEntity<Long> countBeers(
+    F countBeers(
             @ApiParam(value = "Criterio para filtrar o resultado") BeerCriteria criteria
     );
 
@@ -66,8 +69,8 @@ public interface BeerAPI<P extends IPage, S extends ISort> {
      */
     @ApiOperation(nickname = "getBeerById", response = Beer.class, value = "Consultar cerveja pelo Id.")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Cerveja consultada com sucesso.", response = Beer.class)})
-    IEntity<Beer> getBeer(
-            @ApiParam(value = "Beer Id", required = true) Integer id
+    G getBeer(
+            @ApiParam(value = "Id da cerveja", required = true, example = "0") Integer id
     );
 
     /**
@@ -81,7 +84,7 @@ public interface BeerAPI<P extends IPage, S extends ISort> {
             value = "Cadastrar uma nova cerveja.",
             notes = "A entidade a ser cadastrada não pode possuir um valor no campo Id.")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Cerveja cadastrada com sucesso.", response = Beer.class)})
-    IEntity<BeerDTO> postBeer(
+    G postBeer(
             @ApiParam(value = "Entidade cerveja a ser cadastrada", required = true) BeerDTO beer
     ) throws URISyntaxException; // Necessario para caso corra erros ao preparar a resposta 201
 
@@ -93,7 +96,7 @@ public interface BeerAPI<P extends IPage, S extends ISort> {
      */
     @ApiOperation(nickname = "putBeer", value = "Atualizar cerveja cadastrada.")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Cadastro atualizado com sucesso.")})
-    IEntity<BeerDTO> putBeer(
+    G putBeer(
             @ApiParam(value = "Cadastro da cerveja com os campos atualizados", required = true) BeerDTO beer
     );
 
@@ -106,9 +109,9 @@ public interface BeerAPI<P extends IPage, S extends ISort> {
      */
     @ApiOperation(nickname = "patchBeer", value = "Atualizar preço de uma cerveja cadastrada.")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Preço atualizado com sucesso.")})
-    IEntity<BeerDTO> patchBeer(
-            @ApiParam(value = "Id da cerveja a ser atualizada", required = true) Integer id,
-            @ApiParam(value = "Novo preço da cerveja", required = true) BigDecimal price
+    G patchBeer(
+            @ApiParam(value = "Id da cerveja a ser atualizada", required = true, example = "0") Integer id,
+            @ApiParam(value = "Novo preço da cerveja", required = true, example = "0") BigDecimal price
     );
 
     /**
@@ -120,7 +123,7 @@ public interface BeerAPI<P extends IPage, S extends ISort> {
     @ApiOperation(value = "Remover cerveja", nickname = "beersIdDelete")
     @ApiResponses(value = {@ApiResponse(code = 204, message = "Removido com sucesso.")})
     IEntity<Void> deleteBeer(
-            @ApiParam(value = "Id da cerveja a ser removida", required = true) Integer id
+            @ApiParam(value = "Id da cerveja a ser removida", required = true, example = "0") Integer id
     );
 
 }

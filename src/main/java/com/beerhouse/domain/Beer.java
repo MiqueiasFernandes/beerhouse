@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Beer {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(length = 100, unique = true, nullable = false)
@@ -22,7 +22,7 @@ public class Beer {
     private String alcoholContent;
 
     @Column(length = 50)
-    private String category ;
+    private String category;
 
     @JsonIgnore
     @Column(length = 1000)

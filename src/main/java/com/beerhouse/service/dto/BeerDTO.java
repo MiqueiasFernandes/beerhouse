@@ -20,7 +20,7 @@ public class BeerDTO {
     private String alcoholContent;
 
     @Size(max = 50)
-    private String category ;
+    private String category;
 
     @Size(max = 50)
     private String ingredients;

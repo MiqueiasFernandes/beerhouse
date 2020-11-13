@@ -3,7 +3,6 @@ package com.beerhouse.api.web.rest;
 import com.beerhouse.api.BeerAPI;
 import com.beerhouse.api.errors.BadRequestAlertException;
 import com.beerhouse.domain.Beer;
-import com.beerhouse.entity.IEntity;
 import com.beerhouse.entity.spring.SpringEntity;
 import com.beerhouse.entity.spring.SpringPage;
 import com.beerhouse.entity.spring.SpringSort;
@@ -13,7 +12,6 @@ import com.beerhouse.service.dto.BeerCriteria;
 import com.beerhouse.service.dto.BeerDTO;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import io.undertow.util.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -38,7 +36,9 @@ import static org.hibernate.id.IdentifierGenerator.ENTITY_NAME;
  * Essa classe implementa as especificações da API em {@link BeerAPI} utilizando Spring.
  */
 @RestController
-public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
+public class BeerSpringAPI implements BeerAPI<
+        SpringEntity<List<BeerDTO>>, SpringEntity<Long>, SpringEntity<BeerDTO>,
+        SpringPage, SpringSort> {
 
     private final Logger log = LoggerFactory.getLogger(BeerSpringAPI.class);
     private final BeerService beerService;
@@ -49,13 +49,24 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
         this.beerQueryService = beerQueryService;
     }
 
+    private static <T> SpringEntity<T> springEntity(ResponseEntity<T> responseEntity) {
+        return SpringEntity.fromResponse(responseEntity);
+    }
+
+    private static ResponseEntity.BodyBuilder ok() {
+        return ResponseEntity.ok();
+    }
+
+    private static <T> ResponseEntity<T> ok(T body) {
+        return ResponseEntity.ok(body);
+    }
+
     /**
      * {@code GET  /beers} : Listar todas cervejas.
      *
-     * @param page argumento opcional para paginar o resultado.
-     * @param sort argumento opcional para ordenar o resultado.
+     * @param page     argumento opcional para paginar o resultado.
+     * @param sort     argumento opcional para ordenar o resultado.
      * @param criteria argumento opcional para filtrar o resultado por criterios.
-     *
      * @return the {@link SpringEntity} with status {@code 200 (OK)} and the list of {@link BeerDTO} in body.
      */
     @Override
@@ -75,7 +86,7 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
                 ServletUriComponentsBuilder.fromCurrentRequest(),
                 beersPage
         );
-        SpringEntity<List<BeerDTO>>  response = springEntity(ok().headers(headers).body(beersPage.getContent()));
+        SpringEntity<List<BeerDTO>> response = springEntity(ok().headers(headers).body(beersPage.getContent()));
         log.debug("Consulta de cervejas: {}", response.printableEntity());
         return response;
     }
@@ -98,11 +109,11 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
      *
      * @param id the id of the {@link Beer} to retrieve.
      * @return the {@link SpringEntity} with status {@code 200 (OK)} and with body the {@link BeerDTO},
-     *         or with status {@code 404 (Not Found)}.
+     * or with status {@code 404 (Not Found)}.
      */
     @Override
     @GetMapping("/beers/{id}")
-    public SpringEntity<BeerDTO> getBeer(Integer id) {
+    public SpringEntity<BeerDTO> getBeer(@PathVariable Integer id) {
         log.debug("REST request to get Beer : {}", id);
         Optional<BeerDTO> beer = beerService.findOne(id).map(BeerDTO::new);
         return springEntity(ResponseUtil.wrapOrNotFound(beer));
@@ -113,7 +124,7 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
      *
      * @param beer a cerveja a ser cadastrada.
      * @return the {@link SpringEntity} with status {@code 201 (Created)} and with body the new {@link Beer},
-     *         or with status {@code 400 (Bad Request)} if the {@link Beer} has already an ID.
+     * or with status {@code 400 (Bad Request)} if the {@link Beer} has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @Override
@@ -138,7 +149,6 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated {@link BeerDTO},
      * or with status {@code 400 (Bad Request)} if the {@link Beer} is not valid,
      * or with status {@code 500 (Internal Server Error)} if the {@link Beer} couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @Override
     @PutMapping("/beers")
@@ -158,7 +168,7 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
      * @return the {@link SpringEntity} with status {@code 200 (OK)} and with body the {@link BeerDTO}.
      */
     @Override
-    @PatchMapping("/beers/:id")
+    @PatchMapping("/beers/{id}")
     public SpringEntity<BeerDTO> patchBeer(@PathVariable Integer id, BigDecimal price) {
         Beer beer = beerService
                 .findOne(id)
@@ -183,23 +193,11 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
         return springEntity(ResponseEntity.noContent().build());
     }
 
-    private static final <T> SpringEntity<T> springEntity(ResponseEntity<T> responseEntity) {
-        return SpringEntity.fromResponse(responseEntity);
-    }
-
-    private static final ResponseEntity.BodyBuilder ok() {
-        return ResponseEntity.ok();
-    }
-
-    private static final <T> ResponseEntity<T> ok(T body) {
-        return ResponseEntity.ok(body);
-    }
-
     void faik() {
         saveBeer(new String[]{"Skol", "100%", "Boa", "Cevada & Alcohol & Água", "3.56"});
         saveBeer(new String[]{"Antartica", "50%", "Otima", "Cevada & Alcohol", "4.9995"});
-            saveBeer(new String[]{"Bramaha", "35%", "Boa", "Alcohol & Água", "2"});
-            saveBeer(new String[]{"Kayser", "35%", "Boa", null, "2"});
+        saveBeer(new String[]{"Bramaha", "35%", "Boa", "Alcohol & Água", "2"});
+        saveBeer(new String[]{"Kayser", "35%", "Boa", null, "2"});
     }
 
     void saveBeer(String[] args) {
@@ -208,9 +206,8 @@ public class BeerSpringAPI implements BeerAPI<SpringPage, SpringSort> {
         beer.setAlcoholContent(args[1]);
         beer.setCategory(args[2]);
         beer.setIngredients(args[3]);
-        beer.setPrice(BigDecimal.valueOf(Float.valueOf(args[4])));
+        beer.setPrice(BigDecimal.valueOf(Float.parseFloat(args[4])));
         beerService.save(beer);
     }
-
 
 }

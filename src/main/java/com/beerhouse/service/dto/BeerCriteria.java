@@ -1,13 +1,13 @@
 package com.beerhouse.service.dto;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import io.github.jhipster.service.Criteria;
 import io.github.jhipster.service.filter.BigDecimalFilter;
 import io.github.jhipster.service.filter.Filter;
 import io.github.jhipster.service.filter.IntegerFilter;
 import io.github.jhipster.service.filter.StringFilter;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Criteria class for the {@link com.beerhouse.domain.Beer} entity. This class is used
