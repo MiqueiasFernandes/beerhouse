@@ -15,11 +15,13 @@ public class SpringPage implements IPage {
     private int page;
     private int size;
 
-    public SpringPage(SpringDataWebProperties dataWebProperties) {
+    public SpringPage(SpringDataWebProperties dataWebProperties) throws InstantiationException {
         if (dataWebProperties != null) {
             SpringDataWebProperties.Pageable pageable = dataWebProperties.getPageable();
             default_index_page = pageable.isOneIndexedParameters() ? 1 : 0;
             default_page_size = pageable.getDefaultPageSize();
+        } else if (default_page_size < 0 || default_index_page < 0) {
+            throw new InstantiationException("A pagina não foi configurada corretamente.");
         }
         this.page = default_index_page;
         this.size = default_page_size;

@@ -1,8 +1,10 @@
 package com.beerhouse.service;
 
-import java.util.List;
-
+import com.beerhouse.domain.Beer;
 import com.beerhouse.domain.Beer_;
+import com.beerhouse.repository.BeerRepository;
+import com.beerhouse.service.dto.BeerCriteria;
+import io.github.jhipster.service.QueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,11 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.jhipster.service.QueryService;
-
-import com.beerhouse.domain.Beer;
-import com.beerhouse.repository.BeerRepository;
-import com.beerhouse.service.dto.BeerCriteria;
+import java.util.List;
 
 /**
  * Service for executing complex queries for {@link Beer} entities in the database.
@@ -37,6 +35,7 @@ public class BeerQueryService extends QueryService<Beer> {
 
     /**
      * Return a {@link List} of {@link Beer} which matches the criteria from the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching entities.
      */
@@ -49,8 +48,9 @@ public class BeerQueryService extends QueryService<Beer> {
 
     /**
      * Return a {@link Page} of {@link Beer} which matches the criteria from the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
+     * @param page     The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
@@ -62,11 +62,12 @@ public class BeerQueryService extends QueryService<Beer> {
 
     /**
      * Return the number of matching entities in the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the number of matching entities.
      */
     @Transactional(readOnly = true)
-    public long countByCriteria(BeerCriteria criteria) {
+    public Long countByCriteria(BeerCriteria criteria) {
         log.debug("count beers by criteria : {}", criteria);
         final Specification<Beer> specification = createSpecification(criteria);
         return beerRepository.count(specification);
@@ -74,6 +75,7 @@ public class BeerQueryService extends QueryService<Beer> {
 
     /**
      * Function to convert {@link BeerCriteria} to a {@link Specification}
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching {@link Specification} of the entity.
      */
