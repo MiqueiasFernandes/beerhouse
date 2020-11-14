@@ -1,7 +1,6 @@
 package com.beerhouse.config;
 
 import io.github.jhipster.config.JHipsterProperties;
-import io.github.jhipster.config.h2.H2ConfigurationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -13,7 +12,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 /**
  * Configuration of web application with Servlet 3.0 APIs.
@@ -22,9 +20,7 @@ import javax.servlet.ServletException;
 public class WebConfigurer implements ServletContextInitializer {
 
     private final Logger log = LoggerFactory.getLogger(WebConfigurer.class);
-
     private final Environment env;
-
     private final JHipsterProperties jHipsterProperties;
 
     public WebConfigurer(Environment env, JHipsterProperties jHipsterProperties) {
@@ -33,11 +29,10 @@ public class WebConfigurer implements ServletContextInitializer {
     }
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
         if (env.getActiveProfiles().length != 0) {
             log.info("Web application configuration, using profiles: {}", (Object[]) env.getActiveProfiles());
         }
-        initH2Console(servletContext);
         log.info("Web application fully configured");
     }
 
@@ -47,18 +42,10 @@ public class WebConfigurer implements ServletContextInitializer {
         CorsConfiguration config = jHipsterProperties.getCors();
         if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
             log.debug("Registering CORS filter");
-            source.registerCorsConfiguration("/api/**", config);
             source.registerCorsConfiguration("/v2/api-docs", config);
+            source.registerCorsConfiguration("/beers**", config);
         }
         return new CorsFilter(source);
-    }
-
-    /**
-     * Initializes H2 console.
-     */
-    private void initH2Console(ServletContext servletContext) {
-        log.debug("Initialize H2 console");
-        H2ConfigurationHelper.initH2Console(servletContext);
     }
 
 }
