@@ -2,10 +2,7 @@ package com.beerhouse.service.dto;
 
 import com.beerhouse.domain.Beer;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 public class BeerDTO {
@@ -26,6 +23,7 @@ public class BeerDTO {
     private String ingredients;
 
     @NotNull
+    @DecimalMin("0")
     private BigDecimal price;
 
     @Null
@@ -67,6 +65,11 @@ public class BeerDTO {
         this.id = id;
     }
 
+    public BeerDTO id(Integer id) {
+        this.id = id;
+        return this;
+    }
+
     public String getFormula() {
         return this.formula;
     }
@@ -79,8 +82,13 @@ public class BeerDTO {
         return name;
     }
 
-    public void setName(String firstName) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public BeerDTO name(String name) {
+        this.name = name;
+        return this;
     }
 
     public String getAlcoholContent() {
@@ -91,12 +99,24 @@ public class BeerDTO {
         this.alcoholContent = alcoholContent;
     }
 
+
+    public BeerDTO alcoholContent(String alcoholContent) {
+        this.alcoholContent = alcoholContent;
+        return this;
+    }
+
     public String getCategory() {
         return category;
     }
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+
+    public BeerDTO category(String category) {
+        this.category = category;
+        return this;
     }
 
     public String getIngredients() {
@@ -107,12 +127,22 @@ public class BeerDTO {
         this.ingredients = ingredients;
     }
 
+    public BeerDTO ingredients(String ingredients) {
+        this.ingredients = ingredients;
+        return this;
+    }
+
     public BigDecimal getPrice() {
         return price;
     }
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BeerDTO price(BigDecimal price) {
+        this.price = price;
+        return this;
     }
 
     @Override

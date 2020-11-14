@@ -73,8 +73,6 @@ public class BeerSpringAPI implements BeerAPI<
     @GetMapping("/beers")
     public SpringEntity<List<BeerDTO>> getBeers(SpringPage page, SpringSort sort, BeerCriteria criteria) {
 
-        faik();
-
         Sort springSort = sort.getSpringSort();
         Pageable pageable = page.getPageable(springSort);
 
@@ -136,6 +134,10 @@ public class BeerSpringAPI implements BeerAPI<
             throw new BadRequestAlertException("O Campo Id deve estar vazio", ENTITY_NAME, "idexists");
         }
 
+        if (beerService.existis(null, beer.getName()).isPresent()) {
+            throw new BadRequestAlertException("Nome de cerveja ja existe", ENTITY_NAME, "nameexists");
+        }
+
         BeerDTO result = new BeerDTO(beerService.save(beer.toBeer()));
         return springEntity(ResponseEntity
                 .created(new URI("/beers/" + result.getId()))
@@ -191,23 +193,6 @@ public class BeerSpringAPI implements BeerAPI<
         log.debug("REST request to delete Beer : {}", id);
         beerService.delete(id);
         return springEntity(ResponseEntity.noContent().build());
-    }
-
-    void faik() {
-        saveBeer(new String[]{"Skol", "100%", "Boa", "Cevada & Alcohol & Água", "3.56"});
-        saveBeer(new String[]{"Antartica", "50%", "Otima", "Cevada & Alcohol", "4.9995"});
-        saveBeer(new String[]{"Bramaha", "35%", "Boa", "Alcohol & Água", "2"});
-        saveBeer(new String[]{"Kayser", "35%", "Boa", null, "2"});
-    }
-
-    void saveBeer(String[] args) {
-        Beer beer = new Beer();
-        beer.setName(args[0]);
-        beer.setAlcoholContent(args[1]);
-        beer.setCategory(args[2]);
-        beer.setIngredients(args[3]);
-        beer.setPrice(BigDecimal.valueOf(Float.parseFloat(args[4])));
-        beerService.save(beer);
     }
 
 }

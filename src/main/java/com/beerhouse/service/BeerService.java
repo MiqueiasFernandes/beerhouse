@@ -27,15 +27,16 @@ public class BeerService {
     }
 
     /**
-     * Get all the beers.
+     * Verificar se uma cerveja está cadastrada.
      *
-     * @param pageable the pagination information.
+     * @param id beer Id.
+     * @param name beer name.
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Beer> findAll(Pageable pageable) {
-        log.debug("Request to get all Beers");
-        return beerRepository.findAll(pageable);
+    public Optional<Beer> existis(Integer id, String name) {
+        log.debug("Request to verify if Has Beer Id: {}  Name: {}", id, name);
+        return beerRepository.findByIdOrName(id, name);
     }
 
     /**

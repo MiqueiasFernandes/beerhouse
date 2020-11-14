@@ -1,7 +1,7 @@
 # ===================================================================
 # Spring Boot configuração do perfil "dev".
 #
-# Esta configuração sobreescreve as do arquivo application.yml.
+# Esta configuração sobreescreve as do arquivo application-test.yml.
 # Referencia completa disponivel em:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
@@ -13,6 +13,9 @@ logging:
     com.beerhouse: DEBUG
 
 spring:
+  profiles:
+    include: ## swagger profile is needed for Jhipster to run swagger backend
+      - swagger
   jpa:
     show-sql: true
     hibernate.ddl-auto: create
