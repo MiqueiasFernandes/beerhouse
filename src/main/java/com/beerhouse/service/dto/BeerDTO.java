@@ -3,31 +3,27 @@ package com.beerhouse.service.dto;
 import com.beerhouse.domain.Beer;
 
 import javax.validation.constraints.*;
-import java.math.BigDecimal;
 
 public class BeerDTO {
 
     private Integer id;
 
-    @NotBlank
-    @Size(min = 3, max = 100)
+    @NotBlank(message = "Um nome valido deve ser informado")
+    @Size(min = 3, max = 100, message = "O nome deve possuir no minino 3 e no maximo 100 caracteres.")
     private String name;
 
-    @Size(max = 50)
+    @Size(max = 50, message = "O limite te caracteres é 50")
     private String alcoholContent;
 
-    @Size(max = 50)
+    @Size(max = 50, message = "O limite te caracteres é 50")
     private String category;
 
-    @Size(max = 50)
+    @Size(max = 1000, message = "O limite te caracteres é 1000")
     private String ingredients;
 
-    @NotNull
-    @DecimalMin("0")
-    private BigDecimal price;
-
-    @Null
-    private String formula;
+    @NotNull(message = "O preço deve ser informado")
+    @DecimalMin(value = "0.01", message = "O preço deve ser no minimo 1 centavo")
+    private Double price;
 
     public BeerDTO() {
         // Empty constructor needed for Jackson.
@@ -40,10 +36,6 @@ public class BeerDTO {
         this.category = beer.getCategory();
         this.ingredients = null;
         this.price = beer.getPrice();
-        this.formula = beer.getIngredients() == null ?
-                "Nenhuma formula cadastrada para essa cerveja." :
-                "Há ingredientes conhecidos, consulte o administrador para obter a formula."
-        ;
     }
 
     public Beer toBeer() {
@@ -68,14 +60,6 @@ public class BeerDTO {
     public BeerDTO id(Integer id) {
         this.id = id;
         return this;
-    }
-
-    public String getFormula() {
-        return this.formula;
-    }
-
-    public void setFormula(String formula) {
-        this.formula = formula;
     }
 
     public String getName() {
@@ -132,15 +116,15 @@ public class BeerDTO {
         return this;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public BeerDTO price(BigDecimal price) {
+    public BeerDTO price(Double price) {
         this.price = price;
         return this;
     }
@@ -154,7 +138,6 @@ public class BeerDTO {
                 ", category='" + category + '\'' +
                 ", ingredients='" + ingredients + '\'' +
                 ", price=" + price +
-                ", formula='" + formula + '\'' +
                 '}';
     }
 }

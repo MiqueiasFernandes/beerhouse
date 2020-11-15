@@ -1,7 +1,7 @@
 package com.beerhouse.service.dto;
 
 import io.github.jhipster.service.Criteria;
-import io.github.jhipster.service.filter.BigDecimalFilter;
+import io.github.jhipster.service.filter.DoubleFilter;
 import io.github.jhipster.service.filter.Filter;
 import io.github.jhipster.service.filter.IntegerFilter;
 import io.github.jhipster.service.filter.StringFilter;
@@ -21,17 +21,11 @@ import java.util.Objects;
 public class BeerCriteria implements Serializable, Criteria {
 
     private static final long serialVersionUID = 1L;
-
     private IntegerFilter id;
-
     private StringFilter name;
-
     private StringFilter ingredients;
-
     private StringFilter alcoholContent;
-
-    private BigDecimalFilter price;
-
+    private DoubleFilter price;
     private StringFilter category;
 
     public BeerCriteria() {
@@ -66,7 +60,6 @@ public class BeerCriteria implements Serializable, Criteria {
         this.name = name;
     }
 
-
     public StringFilter getIngredients() {
         return ingredients;
     }
@@ -83,11 +76,11 @@ public class BeerCriteria implements Serializable, Criteria {
         this.alcoholContent = alcoholContent;
     }
 
-    public BigDecimalFilter getPrice() {
+    public DoubleFilter getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimalFilter price) {
+    public void setPrice(DoubleFilter price) {
         this.price = price;
     }
 

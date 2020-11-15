@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BadRequestAlertException extends AbstractThrowableProblem {
+public class BadRequestProblem extends AbstractThrowableProblem {
 
     private static final long serialVersionUID = 1L;
 
@@ -15,11 +15,11 @@ public class BadRequestAlertException extends AbstractThrowableProblem {
 
     private final String errorKey;
 
-    public BadRequestAlertException(String defaultMessage, String entityName, String errorKey) {
+    public BadRequestProblem(String defaultMessage, String entityName, String errorKey) {
         this(ErrorConstants.DEFAULT_TYPE, defaultMessage, entityName, errorKey);
     }
 
-    public BadRequestAlertException(URI type, String defaultMessage, String entityName, String errorKey) {
+    public BadRequestProblem(URI type, String defaultMessage, String entityName, String errorKey) {
         super(type, defaultMessage, Status.BAD_REQUEST, null, null, null, getAlertParameters(entityName, errorKey));
         this.entityName = entityName;
         this.errorKey = errorKey;

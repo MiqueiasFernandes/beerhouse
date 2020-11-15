@@ -24,7 +24,7 @@ public class SpringSort implements ISort {
         this.keys = this.fromKeys(sort);
         List<Sort.Order> orders = this.keys
                 .stream()
-                .map(a -> a[1] == "ASC" ? Sort.Order.asc(a[0]) : Sort.Order.desc(a[0]))
+                .map(a -> "ASC".equalsIgnoreCase(a[1]) ? Sort.Order.asc(a[0]) : Sort.Order.desc(a[0]))
                 .collect(Collectors.toList());
         this.springSort = Sort.by(orders);
     }
@@ -35,10 +35,11 @@ public class SpringSort implements ISort {
 
     @Override
     public String printableSort() {
-        return this.keys == null ? "[Unsorted]" : this.keys
+        String uns = "[Unsorted]";
+        return this.keys == null ? uns : this.keys
                 .stream()
                 .map(key -> String.join(SEPARADOR, key))
-                .reduce((partialString, element) -> partialString + ";" + element).get();
+                .reduce((partialString, element) -> partialString + ";" + element).orElse(uns);
 
     }
 

@@ -111,7 +111,7 @@ public interface BeerAPI<
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Preço atualizado com sucesso.")})
     G patchBeer(
             @ApiParam(value = "Id da cerveja a ser atualizada", required = true, example = "0") Integer id,
-            @ApiParam(value = "Novo preço da cerveja", required = true, example = "0") BigDecimal price
+            @ApiParam(value = "Novo preço da cerveja", required = true, example = "0") Double price
     );
 
     /**

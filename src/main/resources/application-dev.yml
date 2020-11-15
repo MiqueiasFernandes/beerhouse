@@ -18,7 +18,11 @@ spring:
       - swagger
   jpa:
     show-sql: true
-    hibernate.ddl-auto: create
+    properties:
+      hibernate: ## hbm2ddl.import_files so funciona no perfil dev `hbm2ddl.auto: create-drop`
+        hbm2ddl:
+          auto: create-drop
+          import_files: file:./h2db/basic_data.sql
 
 # ===================================================================
 # JHipster specific properties

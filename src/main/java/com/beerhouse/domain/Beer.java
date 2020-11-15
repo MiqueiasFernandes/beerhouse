@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -29,7 +28,7 @@ public class Beer {
     private String ingredients;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Double price;
 
     @ApiModelProperty(value = "Id")
     public Integer getId() {
@@ -68,11 +67,11 @@ public class Beer {
     }
 
     @ApiModelProperty(value = "Preço")
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

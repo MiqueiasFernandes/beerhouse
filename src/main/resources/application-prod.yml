@@ -18,7 +18,11 @@ spring:
       - swagger
   jpa:
     show-sql: false
-    hibernate.ddl-auto: update
+    properties:
+      hibernate:
+        hbm2ddl.auto: update
+  datasource:
+    data: file:./h2db/basic_data.sql
 
 server:
   compression:

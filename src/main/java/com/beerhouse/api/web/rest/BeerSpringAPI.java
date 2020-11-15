@@ -1,7 +1,7 @@
 package com.beerhouse.api.web.rest;
 
 import com.beerhouse.api.BeerAPI;
-import com.beerhouse.api.errors.BadRequestAlertException;
+import com.beerhouse.api.errors.BadRequestProblem;
 import com.beerhouse.domain.Beer;
 import com.beerhouse.entity.spring.SpringEntity;
 import com.beerhouse.entity.spring.SpringPage;
@@ -22,13 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.math.BigDecimal;
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hibernate.id.IdentifierGenerator.ENTITY_NAME;
 
 /**
  * Controler Spring para implementar a API em Rest de acesso ao cadastro de {@link com.beerhouse.domain.Beer}.
@@ -40,6 +39,7 @@ public class BeerSpringAPI implements BeerAPI<
         SpringEntity<List<BeerDTO>>, SpringEntity<Long>, SpringEntity<BeerDTO>,
         SpringPage, SpringSort> {
 
+    private final String ENTITY_NAME = "Beer";
     private final Logger log = LoggerFactory.getLogger(BeerSpringAPI.class);
     private final BeerService beerService;
     private final BeerQueryService beerQueryService;
@@ -127,15 +127,15 @@ public class BeerSpringAPI implements BeerAPI<
      */
     @Override
     @PostMapping("/beers")
-    public SpringEntity<BeerDTO> postBeer(@RequestBody BeerDTO beer) throws URISyntaxException {
+    public SpringEntity<BeerDTO> postBeer(@RequestBody @Valid BeerDTO beer) throws URISyntaxException {
         log.debug("REST request to save Beer : {}", beer);
 
         if (beer.getId() != null) {
-            throw new BadRequestAlertException("O Campo Id deve estar vazio", ENTITY_NAME, "idexists");
+            throw new BadRequestProblem("O Campo Id deve estar vazio", ENTITY_NAME, "idexists");
         }
 
         if (beerService.existis(null, beer.getName()).isPresent()) {
-            throw new BadRequestAlertException("Nome de cerveja ja existe", ENTITY_NAME, "nameexists");
+            throw new BadRequestProblem("Nome de cerveja ja existe", ENTITY_NAME, "nameexists");
         }
 
         BeerDTO result = new BeerDTO(beerService.save(beer.toBeer()));
@@ -154,10 +154,10 @@ public class BeerSpringAPI implements BeerAPI<
      */
     @Override
     @PutMapping("/beers")
-    public SpringEntity<BeerDTO> putBeer(@RequestBody BeerDTO beer) {
+    public SpringEntity<BeerDTO> putBeer(@RequestBody @Valid BeerDTO beer) {
         log.debug("REST request to update Beer : {}", beer);
         if (beer.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestProblem("Invalid id", ENTITY_NAME, "idnull");
         }
         BeerDTO result = new BeerDTO(beerService.save(beer.toBeer()));
         return springEntity(ok(result));
@@ -171,10 +171,10 @@ public class BeerSpringAPI implements BeerAPI<
      */
     @Override
     @PatchMapping("/beers/{id}")
-    public SpringEntity<BeerDTO> patchBeer(@PathVariable Integer id, BigDecimal price) {
+    public SpringEntity<BeerDTO> patchBeer(@PathVariable Integer id, Double price) {
         Beer beer = beerService
                 .findOne(id)
-                .orElseThrow(() -> new BadRequestAlertException("Id invalido", ENTITY_NAME, "invalidId"));
+                .orElseThrow(() -> new BadRequestProblem("Id invalido", ENTITY_NAME, "invalidId"));
 
         beer.setPrice(price);
         beerService.save(beer);
