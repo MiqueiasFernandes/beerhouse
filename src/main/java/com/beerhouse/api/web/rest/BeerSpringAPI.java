@@ -156,11 +156,22 @@ public class BeerSpringAPI implements BeerAPI<
     @PutMapping("/beers")
     public SpringEntity<BeerDTO> putBeer(@RequestBody @Valid BeerDTO beer) {
         log.debug("REST request to update Beer : {}", beer);
+
         if (beer.getId() == null) {
-            throw new BadRequestProblem("Invalid id", ENTITY_NAME, "idnull");
+            throw new BadRequestProblem("Cerveja sem id", ENTITY_NAME, "idnull");
         }
-        BeerDTO result = new BeerDTO(beerService.save(beer.toBeer()));
-        return springEntity(ok(result));
+
+        if (beer.getId() < 0) {
+            throw new BadRequestProblem("Id invalido " + beer.getId(), ENTITY_NAME, "idinvalid");
+        }
+
+        if (beerService.existis(null, beer.getName()).map(Beer::getId).orElse(beer.getId()) != beer.getId()) {
+            throw new BadRequestProblem("Nome já cadastrado para outra cerveja.",
+                    ENTITY_NAME, "nameexistis");
+        }
+
+        Optional<BeerDTO> updated = beerService.update(beer.toBeer()).map(BeerDTO::new);
+        return springEntity(ResponseUtil.wrapOrNotFound(updated));
     }
 
     /**

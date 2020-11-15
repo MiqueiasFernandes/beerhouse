@@ -25,7 +25,7 @@ nbdist/
 .nb-gradle/
 
 ### H2 ###
-BeerDB.*
+h2db/
 
 ### maven wraper ###
 mvnw.*

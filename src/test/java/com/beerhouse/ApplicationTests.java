@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +23,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -35,8 +40,9 @@ public class ApplicationTests {
     private static final String category = "ABSD sdf SAD";
     private static final String ingredients = "asf;asd f;asg ;adgfa;gdfsgg;as dg;sdafgerd";
     private static final Double price = 122.987;
-    private static final Integer id_invalid_a = -1;
-    private static final Integer id_invalid_b = null;
+    private static final Integer id_invalid_a = null;
+    private static final Integer id_invalid_b = -1;
+    private static final Integer id_invalid_c = 999999999;
     private static final String name_invalid_a = null;
     private static final String name_invalid_b = "a";
     private static final String name_invalid_c = " ";
@@ -76,8 +82,10 @@ public class ApplicationTests {
     );
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private BeerService beerService;
 
@@ -89,6 +97,20 @@ public class ApplicationTests {
         return cerveja().toBeer();
     }
 
+    void clearDB() throws Exception {
+        //Removendo cervejas cadastradas
+        mockMvc.perform(get("/beers")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(mvcResult -> {
+                    Beer[] beers = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Beer[].class);
+                    for (Beer beer : beers) {
+                        beerService.delete(beer.getId());
+                    }
+                });
+    }
+
     @Test
     void cadastrarCervejaCorretamente_then_Ok() throws Exception {
         Beer toSave = cervejaOk();
@@ -97,16 +119,15 @@ public class ApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(toSave)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.id", instanceOf(Integer.TYPE)))
                 .andExpect(jsonPath("$.name", is(toSave.getName())))
                 .andExpect(jsonPath("$.alcoholContent", is(toSave.getAlcoholContent())))
                 .andExpect(jsonPath("$.category", is(toSave.getCategory())))
                 .andExpect(jsonPath("$.ingredients", is(toSave.getIngredients())))
-                .andExpect(jsonPath("$.price", closeTo(toSave.getPrice(), 0.0001)));
+                .andExpect(jsonPath("$.price", is(toSave.getPrice())));
 
         toSave = cervejaOk();
         Beer beer = beerService.save(toSave);
-        toSave.setId(beer.getId());
         Assertions.assertNotNull(beer.getId());
         Assertions.assertEquals(beer, toSave);
     }
@@ -131,7 +152,7 @@ public class ApplicationTests {
 
         //Internamente tambem proibe nome duplicado
         cerverja_para_recadastrar.setId(null);
-        Assertions.assertThrows(Exception.class, () -> beerService.save(cerverja_para_recadastrar));
+        Assertions.assertThrows(DataIntegrityViolationException.class, () -> beerService.save(cerverja_para_recadastrar));
     }
 
     @Test
@@ -152,6 +173,7 @@ public class ApplicationTests {
                 cerveja_com_name_invalido_c, cerveja_com_name_invalido_d,
                 cerveja_com_alcoholContent_invalid,
                 cerveja_com_category_invalid,
+                cerveja_com_ingredients_invalid,
                 cerveja_com_price_invalido_a, cerveja_com_price_invalido_b,
                 new BeerDTO()
         );
@@ -162,31 +184,6 @@ public class ApplicationTests {
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                     .andExpect(status().is(anyOf(is(400), is(500))));
         }
-
-        //Campo ingrediente muito longo, Jackson esta ocultando no json
-        cerveja_com_ingredients_invalid.setIngredients("$#@%");
-        String cerveja_ing_inv = objectMapper.writeValueAsString(cerveja_com_ingredients_invalid);
-        cerveja_ing_inv = cerveja_ing_inv.replace("$#@%", ingredients_invalid);
-
-        mockMvc.perform(post("/beers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(cerveja_ing_inv))
-                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-                .andExpect(status().is(anyOf(is(400), is(500))));
-    }
-
-    void clearDB() throws Exception {
-        //Removendo cervejas cadastradas
-        mockMvc.perform(get("/beers")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(mvcResult -> {
-                    Beer[] beers = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Beer[].class);
-                    for (Beer beer : beers) {
-                        beerService.delete(beer.getId());
-                    }
-                });
     }
 
     @Test
@@ -362,15 +359,98 @@ public class ApplicationTests {
 
     @Test
     void atualizarCervejaCorretamente_then_Ok() throws Exception {
+
+        Beer toUpdate = cervejaOk();
+        toUpdate = beerService.save(toUpdate);
+
+        toUpdate.setName("Skin kariol");
+        toUpdate.setIngredients("novos ingredientes");
+        toUpdate.setCategory("nova categoria");
+        toUpdate.setAlcoholContent("sem alcol");
+        toUpdate.setPrice(235.768);
+
+        Beer beer = beerService.update(toUpdate).orElse(null);
+        Assertions.assertNotNull(beer.getId());
+        Assertions.assertEquals(beer, toUpdate);
+
+        toUpdate.setName("Skin kariol nova");
+        toUpdate.setIngredients("novos ingredientes nova");
+        toUpdate.setCategory("nova categoria nova");
+        toUpdate.setAlcoholContent("sem alcol nova");
+        toUpdate.setPrice(545158.456);
+
+        mockMvc.perform(put("/beers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(toUpdate)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(toUpdate.getId())))
+                .andExpect(jsonPath("$.name", is(toUpdate.getName())))
+                .andExpect(jsonPath("$.alcoholContent", is(toUpdate.getAlcoholContent())))
+                .andExpect(jsonPath("$.category", is(toUpdate.getCategory())))
+                .andExpect(jsonPath("$.ingredients", is(toUpdate.getIngredients())))
+                .andExpect(jsonPath("$.price", is(toUpdate.getPrice())));
+
+    }
+
+    @Test
+    void atualizarCervejaComIdInvalido_then_Error() throws Exception {
+
+        Beer toUpdate = cervejaOk();
+        beerService.save(toUpdate);
+
+        //Id nulo
+        toUpdate.setId(id_invalid_a);
+        final Beer updated_a = new BeerDTO(toUpdate).toBeer();
+        Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> beerService.update(updated_a));
+
+        mockMvc.perform(put("/beers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updated_a)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title", is("Cerveja sem id")))
+                .andExpect(jsonPath("$.errorKey", is("idnull")));
+
+        // Id negativo
+        toUpdate.setId(id_invalid_b);
+        final Beer updated_b = new BeerDTO(toUpdate).toBeer();
+        Assertions.assertThrows(InvalidDataAccessApiUsageException.class, () -> beerService.update(updated_b));
+
+        mockMvc.perform(put("/beers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updated_b)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title", is("Id invalido " + updated_b.getId())))
+                .andExpect(jsonPath("$.errorKey", is("idinvalid")));
     }
 
     @Test
     void atualizarCervejaInexistente_then_Error() throws Exception {
+
+        Beer toUpdate = cervejaOk();
+        beerService.save(toUpdate);
+
+        toUpdate.setId(id_invalid_c);
+        final Beer updated = new BeerDTO(toUpdate).toBeer();
+        Assertions.assertThrows(DataIntegrityViolationException.class, () -> beerService.update(updated));
+
+        mockMvc.perform(put("/beers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(toUpdate)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void atualizarCerveja() throws Exception {
+    void atualizarCervejaComCampoInvalido() {
+
     }
+
+    @Test
+    void atualizarCervejaNomeExistente_then_Error() throws Exception {
+
+    }
+
 
     @Test
     void atualizarPrecoCorretamente_then_Ok() {

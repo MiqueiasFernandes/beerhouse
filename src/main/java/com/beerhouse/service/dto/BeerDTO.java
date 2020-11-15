@@ -34,7 +34,7 @@ public class BeerDTO {
         this.name = beer.getName();
         this.alcoholContent = beer.getAlcoholContent();
         this.category = beer.getCategory();
-        this.ingredients = null;
+        this.ingredients = beer.getIngredients();
         this.price = beer.getPrice();
     }
 

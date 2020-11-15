@@ -61,6 +61,28 @@ public class BeerService {
     }
 
     /**
+     * Update a beer.
+     *
+     * @param beer the entity to save.
+     * @return the persisted entity.
+     */
+    public Optional<Beer> update(Beer beer) {
+        log.debug("Request to update Beer : {}", beer);
+        Optional<Beer> atualizado = beerRepository
+                .findById(beer.getId())
+                .map(old -> {
+                    old.setName(beer.getName());
+                    old.setAlcoholContent(beer.getAlcoholContent());
+                    old.setCategory(beer.getCategory());
+                    old.setIngredients(beer.getIngredients());
+                    old.setPrice(beer.getPrice());
+                    return old;
+                });
+        atualizado.ifPresent((beer_) -> beerRepository.save(beer_));
+        return atualizado;
+    }
+
+    /**
      * Delete the beer by id.
      *
      * @param id the id of the entity.

@@ -23,7 +23,6 @@ public class Beer {
     @Column(length = 50)
     private String category;
 
-    @JsonIgnore
     @Column(length = 1000)
     private String ingredients;
 
