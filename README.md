@@ -1,11 +1,10 @@
-# API de genrenciamento de cervejas artesanais
-
-### Baseado no [Building an Application with Spring Boot](https://spring.io/guides/gs/spring-boot/).
+do bao# API de genrenciamento de cervejas artesanais
 
 
-## Executar no perfil dev
+## Acessar arquivos pela web
 
-## Executar com swagger
+acesse: [beerhouse.mikeias.net](http://beerhouse.mikeias.net/)
 
-## Executar em ambiente de produção
+
+![alt text](http://beerhouse.mikeias.net/beerhouse.png)
 

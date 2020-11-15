@@ -33,7 +33,20 @@
             • Executar Jar package:
                 java -jar target/craft-beer-1.0.jar
 
-    mvn clean verify -DskipTests && rm pak -r && mkdir pak && cp targ*/*.jar pak &&cd pak && java -jar craft-beer-1.0.jar
+    Em ambiente Unix limpo:
+    1) instalar git e mvn => sudo apt install git mvn
+    2) clonar o diretorio => git clone https://github.com/MiqueiasFernandes/beerhouse && cd beerhouse
+    3) compilar Perfil:
+                        desenvolvimento => mvn
+                        produção        => mvn -Pprod
+    4) testar    => mvn test
+    5) empacotar => mvn -Pprod clean verify  (pular testes:  -DskipTests) http://35.223.44.81:8888/edit/beerhouse/target/craft-beer-1.0.jar
+    6) rodar     => java -jar craft-beer-1.0.jar
+    7) popular o banco => coloque o arquivo basic_data.sql em ./h2db
+    8) testar a api    => http://beerhouse.mikeias.net:9000/
         </pre>
+
+arquivo <a href="http://beerhouse.mikeias.net/basic_data.sql">basic_data.sql</a>
+
 </body>
 </html>
