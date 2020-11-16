@@ -27,5 +27,8 @@ nbdist/
 ### H2 ###
 h2db/
 
+### Testes ###
+resultado_dos_testes/
+
 ### maven wraper ###
 mvnw.*

@@ -1,4 +1,4 @@
-package com.beerhouse.service.dto;
+package com.beerhouse.entity.dto;
 
 import io.github.jhipster.service.Criteria;
 import io.github.jhipster.service.filter.DoubleFilter;
@@ -18,7 +18,7 @@ import java.util.Objects;
  * As Spring is unable to properly convert the types, unless specific {@link Filter} class are used, we need to use
  * fix type specific filters.
  */
-public class BeerCriteria implements Serializable, Criteria {
+public class BeerCriteriaDTO implements Serializable, Criteria {
 
     private static final long serialVersionUID = 1L;
     private IntegerFilter id;
@@ -28,10 +28,10 @@ public class BeerCriteria implements Serializable, Criteria {
     private DoubleFilter price;
     private StringFilter category;
 
-    public BeerCriteria() {
+    public BeerCriteriaDTO() {
     }
 
-    public BeerCriteria(BeerCriteria other) {
+    public BeerCriteriaDTO(BeerCriteriaDTO other) {
         this.id = other.id == null ? null : other.id;
         this.name = other.name == null ? null : other.name.copy();
         this.ingredients = other.ingredients == null ? null : other.ingredients.copy();
@@ -40,8 +40,8 @@ public class BeerCriteria implements Serializable, Criteria {
         this.category = other.category == null ? null : other.category.copy();
     }
 
-    public BeerCriteria copy() {
-        return new BeerCriteria(this);
+    public BeerCriteriaDTO copy() {
+        return new BeerCriteriaDTO(this);
     }
 
     public IntegerFilter getId() {
@@ -100,7 +100,7 @@ public class BeerCriteria implements Serializable, Criteria {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final BeerCriteria that = (BeerCriteria) o;
+        final BeerCriteriaDTO that = (BeerCriteriaDTO) o;
         return
                 Objects.equals(id, that.id) &&
                         Objects.equals(name, that.name) &&

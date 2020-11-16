@@ -14,7 +14,9 @@ public interface ISort {
 
     default List<String[]> fromKeys(String[] keys) {
         return Arrays.stream(keys)
-                .filter(key -> StringUtils.isNotBlank(key) && key.matches("^[a-zA-Z_]+(:(ASC|DESC|asc|desc))?$"))
+                .filter(key ->
+                        StringUtils.isNotBlank(key) &&
+                                key.matches("^[a-zA-Z_]+(" + SEPARADOR + "(ASC|DESC|asc|desc))?$"))
                 .map(key -> key.split(SEPARADOR))
                 .map(key -> new String[]{key[0], key.length > 1 ? key[1].toUpperCase() : "ASC"})
                 .collect(Collectors.toList());

@@ -2,8 +2,8 @@ package com.beerhouse.service;
 
 import com.beerhouse.domain.Beer;
 import com.beerhouse.domain.Beer_;
+import com.beerhouse.entity.dto.BeerCriteriaDTO;
 import com.beerhouse.repository.BeerRepository;
-import com.beerhouse.service.dto.BeerCriteria;
 import io.github.jhipster.service.QueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * Service for executing complex queries for {@link Beer} entities in the database.
- * The main input is a {@link BeerCriteria} which gets converted to {@link Specification},
+ * The main input is a {@link BeerCriteriaDTO} which gets converted to {@link Specification},
  * in a way that all the filters must apply.
  * It returns a {@link List} of {@link Beer} or a {@link Page} of {@link Beer} which fulfills the criteria.
  */
@@ -40,7 +40,7 @@ public class BeerQueryService extends QueryService<Beer> {
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
-    public List<Beer> findByCriteria(BeerCriteria criteria) {
+    public List<Beer> findByCriteria(BeerCriteriaDTO criteria) {
         log.debug("find beer by criteria : {}", criteria);
         final Specification<Beer> specification = createSpecification(criteria);
         return beerRepository.findAll(specification);
@@ -54,7 +54,7 @@ public class BeerQueryService extends QueryService<Beer> {
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
-    public Page<Beer> findByCriteria(BeerCriteria criteria, Pageable page) {
+    public Page<Beer> findByCriteria(BeerCriteriaDTO criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Beer> specification = createSpecification(criteria);
         return beerRepository.findAll(specification, page);
@@ -67,19 +67,19 @@ public class BeerQueryService extends QueryService<Beer> {
      * @return the number of matching entities.
      */
     @Transactional(readOnly = true)
-    public Long countByCriteria(BeerCriteria criteria) {
+    public Long countByCriteria(BeerCriteriaDTO criteria) {
         log.debug("count beers by criteria : {}", criteria);
         final Specification<Beer> specification = createSpecification(criteria);
         return beerRepository.count(specification);
     }
 
     /**
-     * Function to convert {@link BeerCriteria} to a {@link Specification}
+     * Function to convert {@link BeerCriteriaDTO} to a {@link Specification}
      *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching {@link Specification} of the entity.
      */
-    protected Specification<Beer> createSpecification(BeerCriteria criteria) {
+    protected Specification<Beer> createSpecification(BeerCriteriaDTO criteria) {
         Specification<Beer> specification = Specification.where(null);
         if (criteria != null) {
             if (criteria.getId() != null) {

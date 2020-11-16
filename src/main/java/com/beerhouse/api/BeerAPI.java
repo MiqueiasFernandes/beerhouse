@@ -4,11 +4,11 @@ import com.beerhouse.domain.Beer;
 import com.beerhouse.entity.IEntity;
 import com.beerhouse.entity.IPage;
 import com.beerhouse.entity.ISort;
-import com.beerhouse.service.dto.BeerCriteria;
-import com.beerhouse.service.dto.BeerDTO;
+import com.beerhouse.entity.dto.BeerCriteriaDTO;
+import com.beerhouse.entity.dto.BeerDTO;
+import com.beerhouse.entity.dto.BeerPatchDTO;
 import io.swagger.annotations.*;
 
-import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public interface BeerAPI<
     E getBeers(
             @ApiParam(value = "Parametro para paginar o resultado") P page,
             @ApiParam(value = "Parametro para ordenar o resultado") S sort,
-            @ApiParam(value = "Criterio para filtrar o resultado") BeerCriteria criteria
+            @ApiParam(value = "Criterio para filtrar o resultado") BeerCriteriaDTO criteria
     );
 
     /**
@@ -58,7 +58,7 @@ public interface BeerAPI<
     @ApiOperation(nickname = "countBeers", response = Long.class, value = "Contabilizar cervejas.")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Contabilizado com sucesso.", response = Long.class)})
     F countBeers(
-            @ApiParam(value = "Criterio para filtrar o resultado") BeerCriteria criteria
+            @ApiParam(value = "Criterio para filtrar o resultado") BeerCriteriaDTO criteria
     );
 
     /**
@@ -103,15 +103,13 @@ public interface BeerAPI<
     /**
      * Alterar o preço de uma {@link Beer}.
      *
-     * @param id    um {@link Integer} que é o Id da cerveja para atualizar o preço.
-     * @param price um {@link BigDecimal} novo preço da cerveja.
+     * @param beer uma entidade de {@link Beer} cadastrada para atualizar.
      * @return a {@link IEntity} do tipo {@link Beer} com o preço atualizado.
      */
     @ApiOperation(nickname = "patchBeer", value = "Atualizar preço de uma cerveja cadastrada.")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Preço atualizado com sucesso.")})
     G patchBeer(
-            @ApiParam(value = "Id da cerveja a ser atualizada", required = true, example = "0") Integer id,
-            @ApiParam(value = "Novo preço da cerveja", required = true, example = "0") Double price
+            @ApiParam(value = "Cerveja com o id e o preco atualizado", required = true) BeerPatchDTO beer
     );
 
     /**

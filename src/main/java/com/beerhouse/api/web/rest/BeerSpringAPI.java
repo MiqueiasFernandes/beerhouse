@@ -3,13 +3,14 @@ package com.beerhouse.api.web.rest;
 import com.beerhouse.api.BeerAPI;
 import com.beerhouse.api.errors.BadRequestProblem;
 import com.beerhouse.domain.Beer;
+import com.beerhouse.entity.dto.BeerCriteriaDTO;
+import com.beerhouse.entity.dto.BeerDTO;
+import com.beerhouse.entity.dto.BeerPatchDTO;
 import com.beerhouse.entity.spring.SpringEntity;
 import com.beerhouse.entity.spring.SpringPage;
 import com.beerhouse.entity.spring.SpringSort;
 import com.beerhouse.service.BeerQueryService;
 import com.beerhouse.service.BeerService;
-import com.beerhouse.service.dto.BeerCriteria;
-import com.beerhouse.service.dto.BeerDTO;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -18,8 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -71,7 +74,7 @@ public class BeerSpringAPI implements BeerAPI<
      */
     @Override
     @GetMapping("/beers")
-    public SpringEntity<List<BeerDTO>> getBeers(SpringPage page, SpringSort sort, BeerCriteria criteria) {
+    public SpringEntity<List<BeerDTO>> getBeers(SpringPage page, SpringSort sort, BeerCriteriaDTO criteria) {
 
         Sort springSort = sort.getSpringSort();
         Pageable pageable = page.getPageable(springSort);
@@ -97,7 +100,7 @@ public class BeerSpringAPI implements BeerAPI<
      */
     @Override
     @GetMapping("/beers/count")
-    public SpringEntity<Long> countBeers(BeerCriteria criteria) {
+    public SpringEntity<Long> countBeers(BeerCriteriaDTO criteria) {
         log.debug("REST request to count Beer by criteria: {}", criteria);
         return springEntity(ok(beerQueryService.countByCriteria(criteria)));
     }
@@ -157,13 +160,7 @@ public class BeerSpringAPI implements BeerAPI<
     public SpringEntity<BeerDTO> putBeer(@RequestBody @Valid BeerDTO beer) {
         log.debug("REST request to update Beer : {}", beer);
 
-        if (beer.getId() == null) {
-            throw new BadRequestProblem("Cerveja sem id", ENTITY_NAME, "idnull");
-        }
-
-        if (beer.getId() < 0) {
-            throw new BadRequestProblem("Id invalido " + beer.getId(), ENTITY_NAME, "idinvalid");
-        }
+        checkIDThenGetBeer(beer.getId());
 
         if (beerService.existis(null, beer.getName()).map(Beer::getId).orElse(beer.getId()) != beer.getId()) {
             throw new BadRequestProblem("Nome já cadastrado para outra cerveja.",
@@ -177,19 +174,16 @@ public class BeerSpringAPI implements BeerAPI<
     /**
      * {@code PATCH  /beers/:id} : Atualizar preço da cerveja pelo seu identificador "id".
      *
-     * @param id the id of the {@link Beer} to update price.
+     * @param beerPatchDTO a cerveja a ser atualizada no modelo {@link BeerPatchDTO}.
      * @return the {@link SpringEntity} with status {@code 200 (OK)} and with body the {@link BeerDTO}.
      */
     @Override
-    @PatchMapping("/beers/{id}")
-    public SpringEntity<BeerDTO> patchBeer(@PathVariable Integer id, Double price) {
-        Beer beer = beerService
-                .findOne(id)
-                .orElseThrow(() -> new BadRequestProblem("Id invalido", ENTITY_NAME, "invalidId"));
-
-        beer.setPrice(price);
-        beerService.save(beer);
-        return springEntity(ok(new BeerDTO(beer)));
+    @PatchMapping("/beers")
+    public SpringEntity<BeerDTO> patchBeer(@RequestBody @Valid BeerPatchDTO beerPatchDTO) {
+        Beer beer = checkIDThenGetBeer(beerPatchDTO.getId());
+        beer.setPrice(beerPatchDTO.getPrice());
+        Optional<BeerDTO> updated = beerService.update(beer).map(BeerDTO::new);
+        return springEntity(ResponseUtil.wrapOrNotFound(updated));
     }
 
     /**
@@ -202,8 +196,19 @@ public class BeerSpringAPI implements BeerAPI<
     @DeleteMapping("/beers/{id}")
     public SpringEntity<Void> deleteBeer(@PathVariable Integer id) {
         log.debug("REST request to delete Beer : {}", id);
+        checkIDThenGetBeer(id);
         beerService.delete(id);
         return springEntity(ResponseEntity.noContent().build());
+    }
+
+    private Beer checkIDThenGetBeer(Integer id) {
+        if (id == null) {
+            throw new BadRequestProblem("Cerveja sem id", ENTITY_NAME, "idnull");
+        }
+        if (id < 0) {
+            throw new BadRequestProblem("Id invalido " + id, ENTITY_NAME, "idinvalid");
+        }
+        return beerService.findOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
 }

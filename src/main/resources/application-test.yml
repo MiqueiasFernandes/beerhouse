@@ -9,9 +9,13 @@
 server:
   port: 9001
 
+logging:
+  level:
+    ROOT: DEBUG
+    io.github.jhipster: INFO
+    com.beerhouse: DEBUG
+
 spring:
-  application:
-    name: Craft-Beer
   profiles:
     active: test
   jmx:
@@ -40,10 +44,21 @@ spring:
     show-sql: true
     database-platform: io.github.jhipster.domain.util.FixedH2Dialect
     open-in-view: false
-    properties:
-      hibernate.ddl-auto: create-drop
+    properties.hibernate.ddl-auto: create-drop
   main:
     allow-bean-definition-overriding: true
   output:
     ansi:
       console-available: true
+
+jhipster:
+  cache: # Cache configuration
+    ehcache: # Ehcache configuration
+      time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
+      max-entries: 100 # Number of objects in each cache entry
+  cors:
+    allowed-origins: '*'
+    allowed-methods: 'GET,POST,PUT,PATCH,DELETE'
+    allowed-headers: '*'
+    allow-credentials: true
+    max-age: 1800
