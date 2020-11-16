@@ -13,9 +13,6 @@ logging:
     com.mycompany.myapp: INFO
 
 spring:
-  profiles:
-    include: ## swagger profile is needed for Jhipster to run swagger backend
-      - swagger
   jpa:
     show-sql: false
     properties:
