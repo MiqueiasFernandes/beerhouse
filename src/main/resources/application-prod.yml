@@ -17,9 +17,11 @@ spring:
     show-sql: false
     properties:
       hibernate:
-        hbm2ddl.auto: update
-  datasource:
-    data: file:./h2db/basic_data.sql
+        hbm2ddl:   ## update
+          auto: create-drop
+          import_files: file:./h2db/basic_data.sql
+ # datasource:
+ #   data: file:./h2db/basic_data.sql
 
 server:
   compression:
