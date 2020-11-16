@@ -1,0 +1,54 @@
+## Acessar o terminal para executar na GCloud:
+
+ Disponibilizei um Jupyter em http://beerhouse.mikeias.net:8888/
+ que pode ser utilizado para testar o systema.
+ logo tem um terminal em http://beerhouse.mikeias.net:8888/terminals/1
+ com debian, completamente funcinal e pode ser utilizado para teste do sistema.
+ O sistema esta nesse servidor em: ~/beerhouse
+
+ SENHA: 123
+
+
+## Obter
+
+    clonar repo    : git clone https://github.com/MiqueiasFernandes/beerhouse
+    ou obter zipado: http://beerhouse.mikeias.net/beerhouse.zip
+    ou obter o jar : http://beerhouse.mikeias.net/craft-beer-1.0.jar
+    scpripts sql   :
+
+
+## Compilar
+
+    com mvn perfil dev : `mvn`
+    rodar os testes    : `mvn test`
+    modo para producao : `mvn -Pprod clean verify`
+
+    => o perfil `prod` auto executa os testes antes de gerar o pacote jar
+    => o pacote jar estará dentro de ./target e o resultado dos testes em ./resultado_dos_testes
+
+
+## Executar
+
+    Ao executar, um arquivo será procurado na pasta: ./h2db/basic_data.sql para popular o banco.
+    então antes de executar pode-se colocar o script com os INSERTs para popular o banco.
+    essa conguração pode ser desativada no properties: spring.datasource.data
+
+    `java -jar craft-beer-1.0.jar`
+
+
+## Utilizar
+
+    A API estará disponivel na porta 9000 ao acessar uma pagina será apresentada.
+    Para acesso a API deve-se utilizar o caminho /beers , logo em localhost:
+
+        => localhost:9000/beers          : Lista as cervejas pela API
+        => localhost:9000/h2-console     : Consultar o banco de dados H2
+        => localhost:9000/swagger-ui.htm : Acessar a docmuentação da API pelo Swagger
+
+    Para as consultas pode-se fazer:
+
+        => ?sort=name:desc                 : Ordena os resultados pelo nome, descendente
+        => ?sort=name:desc&sort=price:asc  : Ordena os resultados pelo nome, descendente e preço ascendente
+        => ?sort=name&size=1               : Altera o tamanho da pagina para 1, logo apenas o nome menor será exibido
+        => ?sort=price&size=2&page=1       : Obter os 2
+        => ?sort=price:desc&page=0&size=2  : Obter os 2 maiores preços decrescente, pagina é 0-based
