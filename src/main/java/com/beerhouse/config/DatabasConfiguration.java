@@ -2,20 +2,23 @@ package com.beerhouse.config;
 
 import io.github.jhipster.config.JHipsterConstants;
 import io.github.jhipster.config.h2.H2ConfigurationHelper;
+import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Scanner;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Configuration of H2 embebed database.
@@ -91,8 +94,10 @@ public class DatabasConfiguration implements ServletContextInitializer {
                 File basic_data_file = new File(basic_data.replace("file:./", "./"));
                 if (!basic_data_file.exists()) {
                     log.debug("Criando arquivo de inicialização do banco de dados basico.");
-                    File file = ResourceUtils.getFile("classpath:basic_data.sql");
-                    Files.copy(file.toPath(), basic_data_file.toPath());
+                    ClassPathResource classPathResource = new ClassPathResource("basic_data.sql");
+                    InputStream inputStream = classPathResource.getInputStream();
+                    Files.copy(inputStream, basic_data_file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    IOUtils.closeQuietly(inputStream);
                     log.info("Arquivo SQL salvo em " + basic_data_file);
                 }
             }
