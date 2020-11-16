@@ -1,8 +1,10 @@
 package com.beerhouse.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -21,12 +23,22 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    public static final String USUARIO = "usuario";
+    public static final String SENHA = "senha";
     private final CorsFilter corsFilter;
     private final SecurityProblemSupport problemSupport;
 
     public SecurityConfiguration(CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
         this.corsFilter = corsFilter;
         this.problemSupport = problemSupport;
+    }
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .inMemoryAuthentication()
+                .withUser(USUARIO).password(SENHA)
+                .authorities("ROLE_USER");
     }
 
     @Bean
@@ -39,7 +51,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers(HttpMethod.OPTIONS, "/**")
                 .antMatchers("/h2-console/**")
-                .antMatchers("/swagger-ui/index.html");
+                .antMatchers("/swagger-ui.html")
+                .antMatchers("/v2/api-docs");
     }
 
     @Override
@@ -62,11 +75,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .frameOptions()
                 .deny()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
                 .authorizeRequests()
-                .antMatchers("/**")
-                .permitAll();
+                .antMatchers("/beers/**").authenticated()
+                .anyRequest().permitAll()
+                .and()
+                .httpBasic();
     }
 }

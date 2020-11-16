@@ -14,12 +14,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 import java.util.Map.Entry;
 
+import static com.beerhouse.config.SecurityConfiguration.SENHA;
+import static com.beerhouse.config.SecurityConfiguration.USUARIO;
 import static com.beerhouse.entity.ISort.SEPARADOR;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -28,8 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @SpringBootTest(classes = Application.class)
-@AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test")
+@AutoConfigureMockMvc
+@WithMockUser(username = USUARIO, password = SENHA)
 public class ApplicationTests {
 
     private static final String API = "/beers";
@@ -78,6 +82,7 @@ public class ApplicationTests {
             cerveja().name("CCCCC").price(1.0),
             cerveja().name("BBBBB").price(2.0)
     );
+
     @Autowired
     private MockMvc mockMvc;
 
