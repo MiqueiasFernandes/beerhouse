@@ -14,7 +14,7 @@
     clonar repo    : git clone https://github.com/MiqueiasFernandes/beerhouse
     ou obter zipado: http://beerhouse.mikeias.net/beerhouse.zip
     ou obter o jar : http://beerhouse.mikeias.net/craft-beer-1.0.jar
-    scpripts sql   :
+    scpripts sql   : http://beerhouse.mikeias.net/basic_data.sql
 
 
 ## Compilar
@@ -29,9 +29,11 @@
 
 ## Executar
 
-    Ao executar, um arquivo será procurado na pasta: ./h2db/basic_data.sql para popular o banco.
-    então antes de executar pode-se colocar o script com os INSERTs para popular o banco.
-    essa conguração pode ser desativada no properties: spring.datasource.data
+    Ao executar, um arquivo será procurado: ./h2db/basic_data.sql para popular o banco.
+    O JAR já vem com um arquivo SQL basic_data.sql com 750 registros,
+    então caso o arquivo basic_data.sql não exista esse arquivo de 750 registros será criado.
+    então antes de executar pode-se colocar outro script com os INSERTs para popular o banco.
+    essa conguração pode ser desativada no properties: spring.datasource.data.
 
     `java -jar craft-beer-1.0.jar`
 
@@ -52,3 +54,6 @@
         => ?sort=name&size=1               : Altera o tamanho da pagina para 1, logo apenas o nome menor será exibido
         => ?sort=price&size=2&page=1       : Obter os 2
         => ?sort=price:desc&page=0&size=2  : Obter os 2 maiores preços decrescente, pagina é 0-based
+
+        USUARIO : usuario
+        SENHA   : senha

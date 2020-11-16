@@ -68,14 +68,3 @@ spring:
 jhipster:
   clientApp:
     name: Craft-Beer
-  swagger:
-    default-include-pattern: /beers.*
-    title: CraftBeer API
-    description: Beer House API documentation
-    version: 1.0
-    terms-of-service-url:
-    contact-name:
-    contact-url:
-    contact-email:
-    license: unlicensed
-    license-url:

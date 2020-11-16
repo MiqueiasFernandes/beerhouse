@@ -8,12 +8,14 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.util.ResourceUtils;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.Scanner;
 
 /**
  * Configuration of H2 embebed database.
@@ -40,6 +42,7 @@ public class DatabasConfiguration implements ServletContextInitializer {
      */
     private void initH2Console(ServletContext servletContext) {
         log.info("Inicializando H2 database.");
+
         try {
             String dbURL = env.getProperty("spring.datasource.url", "");
             if (new File("src/main/resources/").exists()) {
@@ -80,20 +83,17 @@ public class DatabasConfiguration implements ServletContextInitializer {
                     throw new Exception("URL do banco de dados H2 invalido: " + dbURL);
                 }
             }
+            //Se o cliente setou a propriedade para popular o banco a partir de arquivo
             String basic_data = env.getProperty("spring.jpa.properties.hibernate.hbm2ddl.import_files");
             basic_data = basic_data == null ? env.getProperty("spring.datasource.data") : basic_data;
             if (basic_data != null) {
                 // Criar um arquivo basico de modelo, caso o cliente não tenhha
                 File basic_data_file = new File(basic_data.replace("file:./", "./"));
                 if (!basic_data_file.exists()) {
-                    log.info("Criando arquivo basico de inicialização do banco de dados basico.");
-                    FileWriter myWriter = new FileWriter(basic_data_file);
-                    String prefix = "INSERT INTO beer (alcohol_content, category, ingredients, name, price) VALUES ";
-                    myWriter.write(prefix + "('Baixo', 'Importada', 'Agua e alcool', 'Skol', 4.85)\n");
-                    myWriter.write(prefix + "('Pouco', 'Classica', 'Cana de acucar', 'Brahama', 8.92)\n");
-                    myWriter.write(prefix + "('Alto', 'Nacional', 'Cevada', 'Antatica', 12.05)\n");
-                    myWriter.write(prefix + "('Sem', 'Rara', 'Agua e Malte', 'Heineken', 10.65)\n");
-                    myWriter.close();
+                    log.debug("Criando arquivo de inicialização do banco de dados basico.");
+                    File file = ResourceUtils.getFile("classpath:basic_data.sql");
+                    Files.copy(file.toPath(), basic_data_file.toPath());
+                    log.info("Arquivo SQL salvo em " + basic_data_file);
                 }
             }
         } catch (Exception e) {
