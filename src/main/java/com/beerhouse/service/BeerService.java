@@ -32,9 +32,9 @@ public class BeerService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Optional<Beer> existis(Integer id, String name) {
-        log.debug("Request to verify if Has Beer Id: {}  Name: {}", id, name);
-        return beerRepository.findByIdOrName(id, name);
+    public Optional<Beer> byName(String name) {
+        log.debug("Request to verify if Has Beer Name: {}", name);
+        return beerRepository.findByName(name);
     }
 
     /**

@@ -137,7 +137,7 @@ public class BeerSpringAPI implements BeerAPI<
             throw new BadRequestProblem("O Campo Id deve estar vazio", ENTITY_NAME, "idexists");
         }
 
-        if (beerService.existis(null, beer.getName()).isPresent()) {
+        if (beerService.byName(beer.getName()).isPresent()) {
             throw new BadRequestProblem("Nome de cerveja ja existe", ENTITY_NAME, "nameexists");
         }
 
@@ -160,9 +160,10 @@ public class BeerSpringAPI implements BeerAPI<
     public SpringEntity<BeerDTO> putBeer(@RequestBody @Valid BeerDTO beer) {
         log.debug("REST request to update Beer : {}", beer);
 
-        checkIDThenGetBeer(beer.getId());
+        Beer beerById = checkIDThenGetBeer(beer.getId());
+        Optional<Integer> beerByName = beerService.byName(beer.getName()).map(Beer::getId);
 
-        if (beerService.existis(null, beer.getName()).map(Beer::getId).orElse(beer.getId()) != beer.getId()) {
+        if (beerByName.isPresent() && !beerByName.get().equals(beerById.getId())) {
             throw new BadRequestProblem("Nome já cadastrado para outra cerveja.",
                     ENTITY_NAME, "nameexistis");
         }

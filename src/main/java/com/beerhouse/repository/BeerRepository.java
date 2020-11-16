@@ -13,6 +13,6 @@ import java.util.Optional;
 @Repository
 public interface BeerRepository extends JpaRepository<Beer, Integer>, JpaSpecificationExecutor<Beer> {
 
-    Optional<Beer> findByIdOrName(Integer id, String name);
+    Optional<Beer> findByName(String name);
 
 }
